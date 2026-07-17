@@ -38,7 +38,7 @@ export function DashboardSidebar() {
   };
 
   return (
-    <aside className="w-full lg:w-[260px] shrink-0 bg-[#1a1a1a] dark:bg-[#0a0a0a] rounded-2xl p-5 lg:p-6 flex flex-col justify-between min-h-0 lg:min-h-[calc(100vh-120px)] transition-colors">
+    <aside className="w-full lg:w-[260px] shrink-0 bg-[#1a1a1a] dark:bg-[#0a0a0a] rounded-2xl p-5 lg:p-6 flex flex-col justify-between min-h-0 lg:min-h-[calc(100vh-48px)] lg:sticky lg:top-6 lg:self-start transition-colors">
       {/* Top Header (Logo + Mobile Menu Toggle) */}
       <div className="flex items-center justify-between lg:block mb-0 lg:mb-8">
         <div className="flex flex-col gap-8">

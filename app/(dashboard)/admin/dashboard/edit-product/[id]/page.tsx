@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { useSession } from "@/app/lib/auth-client";
-import { Upload, Loader2, CheckCircle2, X, ImagePlus } from "lucide-react";
+import { useState, useRef, useEffect, use } from "react";
+import { Upload, Loader2, CheckCircle2, X, ImagePlus, ArrowLeft } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const CATEGORIES = [
   "men's clothing",
@@ -11,9 +12,13 @@ const CATEGORIES = [
   "kids' clothing",
 ];
 
-export default function AddProductPage() {
-  const { data: session } = useSession();
+export default function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Unwrapping params in React 19 / Next.js 15
+  const resolvedParams = use(params);
+  const productId = resolvedParams.id;
 
   const [formData, setFormData] = useState({
     title: "",
@@ -26,8 +31,37 @@ export default function AddProductPage() {
   const [imagePreview, setImagePreview] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  // Fetch the existing product data
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/products/${productId}`);
+        if (!res.ok) {
+          if (res.status === 404) throw new Error("Product not found");
+          throw new Error("Failed to fetch product");
+        }
+        
+        const data = await res.json();
+        setFormData({
+          title: data.title || data.name || "",
+          price: data.price ? data.price.toString() : "",
+          description: data.description || "",
+          category: data.category || CATEGORIES[0],
+        });
+        setImagePreview(data.image || data.imageUrl || "");
+      } catch (err: any) {
+        setError(err.message || "Failed to load product details.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [productId]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -89,70 +123,83 @@ export default function AddProductPage() {
       return;
     }
 
-    if (!imageFile) {
-      setError("Please upload a product image.");
+    if (!imagePreview && !imageFile) {
+      setError("Please provide a product image.");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // 1. Upload image to ImgBB
-      setIsUploading(true);
-      const imageUrl = await uploadToImgBB(imageFile);
-      setIsUploading(false);
+      let finalImageUrl = imagePreview;
 
-      // 2. Send product to server
+      // Only upload a new image if the user selected a new file
+      if (imageFile) {
+        setIsUploading(true);
+        finalImageUrl = await uploadToImgBB(imageFile);
+        setIsUploading(false);
+      }
+
+      // 2. Send updated product to server
       const product = {
         title: formData.title.trim(),
         price,
         description: formData.description.trim(),
         category: formData.category,
-        image: imageUrl,
-        user_email: session?.user?.email || "",
-        rating: { rate: 0, count: 0 },
+        image: finalImageUrl,
       };
 
-      const res = await fetch("http://localhost:5000/products", {
-        method: "POST",
+      const res = await fetch(`http://localhost:5000/products/${productId}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(product),
       });
 
-      if (!res.ok) throw new Error("Failed to add product");
+      if (!res.ok) throw new Error("Failed to update product");
 
       setSuccess(true);
-      setFormData({
-        title: "",
-        price: "",
-        description: "",
-        category: CATEGORIES[0],
-      });
-      removeImage();
-
-      setTimeout(() => setSuccess(false), 4000);
+      setTimeout(() => {
+        router.push("/admin/dashboard/products");
+      }, 2000);
     } catch (err) {
-      setError("Failed to add product. Please try again.");
+      setError("Failed to update product. Please try again.");
     } finally {
       setIsSubmitting(false);
       setIsUploading(false);
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="pt-20 flex flex-col items-center justify-center text-neutral-500">
+        <Loader2 className="w-8 h-8 animate-spin mb-4" />
+        <p>Loading product details...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="pt-4 w-full">
+      <Link 
+        href="/admin/dashboard/products" 
+        className="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-[#1a1a1a] dark:hover:text-white transition-colors mb-4"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back to Products
+      </Link>
+      
       <h1 className="text-2xl font-bold text-[#1a1a1a] dark:text-white mb-1">
-        Add Product
+        Edit Product
       </h1>
       <p className="text-sm text-neutral-500 mb-8">
-        Add a new product to the NovaCart catalog.
+        Make changes to the product details.
       </p>
 
       {/* Success */}
       {success && (
         <div className="flex items-center gap-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 px-4 py-3 rounded-xl mb-6 text-sm font-medium">
           <CheckCircle2 className="w-5 h-5 shrink-0" />
-          Product added successfully!
+          Product updated successfully! Redirecting...
         </div>
       )}
 
@@ -287,7 +334,7 @@ export default function AddProductPage() {
                 </div>
                 <div className="text-center">
                   <p className="text-sm font-medium text-[#1a1a1a] dark:text-white">
-                    Click to upload image
+                    Click to upload new image
                   </p>
                   <p className="text-xs text-neutral-400 mt-1">
                     PNG, JPG, WEBP up to 10MB
@@ -316,12 +363,12 @@ export default function AddProductPage() {
             {isSubmitting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                {isUploading ? "Uploading Image..." : "Adding Product..."}
+                {isUploading ? "Uploading Image..." : "Saving Changes..."}
               </>
             ) : (
               <>
                 <Upload className="w-4 h-4" />
-                Add Product
+                Save Changes
               </>
             )}
           </button>
