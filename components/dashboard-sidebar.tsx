@@ -3,14 +3,22 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, ShoppingBag, LogOut, Menu, X, LayoutDashboard } from "lucide-react";
+import { User, ShoppingBag, LogOut, Menu, X, LayoutDashboard, Users, PlusCircle, Package, CreditCard } from "lucide-react";
 import { signOut, useSession } from "@/app/lib/auth-client";
 import { useRouter } from "next/navigation";
 
-const sidebarItems = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, exact: true },
-  { label: "Profile", href: "/dashboard/profile", icon: User },
-  { label: "Order History", href: "/dashboard/orders", icon: ShoppingBag },
+const buyerSidebarItems = [
+  { label: "Dashboard", href: "/buyer/dashboard", icon: LayoutDashboard, exact: true },
+  { label: "Profile", href: "/buyer/dashboard/profile", icon: User },
+  { label: "Order History", href: "/buyer/dashboard/orders", icon: ShoppingBag },
+];
+
+const adminSidebarItems = [
+  { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard, exact: true },
+  { label: "Manage Users", href: "/admin/dashboard/users", icon: Users },
+  { label: "Add Product", href: "/admin/dashboard/add-product", icon: PlusCircle },
+  { label: "Manage Products", href: "/admin/dashboard/products", icon: Package },
+  { label: "Payment History", href: "/admin/dashboard/payments", icon: CreditCard },
 ];
 
 export function DashboardSidebar() {
@@ -19,6 +27,10 @@ export function DashboardSidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = useSession();
   const user = session?.user;
+
+  const isAdmin = pathname.startsWith("/admin");
+  const currentSidebarItems = isAdmin ? adminSidebarItems : buyerSidebarItems;
+  const accountType = isAdmin ? "Admin Account" : "Buyer Account";
 
   const handleSignOut = async () => {
     await signOut();
@@ -46,7 +58,7 @@ export function DashboardSidebar() {
               )}
               <div className="flex flex-col min-w-0">
                 <span className="text-sm font-semibold text-white truncate">{user.name}</span>
-                <span className="text-[11px] text-neutral-400 truncate text-ellipsis">Buyer Account</span>
+                <span className="text-[11px] text-neutral-400 truncate text-ellipsis">{accountType}</span>
               </div>
             </div>
           )}
@@ -76,7 +88,7 @@ export function DashboardSidebar() {
               )}
               <div className="flex flex-col min-w-0">
                 <span className="text-sm font-semibold text-white truncate">{user.name}</span>
-                <span className="text-[11px] text-neutral-400 truncate">Buyer Account</span>
+                <span className="text-[11px] text-neutral-400 truncate">{accountType}</span>
               </div>
             </div>
           )}
@@ -84,7 +96,7 @@ export function DashboardSidebar() {
           <p className="hidden lg:block text-[10px] font-semibold tracking-[0.2em] uppercase text-neutral-500 mb-3 px-3">
             NAVIGATION
           </p>
-          {sidebarItems.map((item) => {
+          {currentSidebarItems.map((item) => {
             const isActive = item.exact
                 ? pathname === item.href
                 : pathname.startsWith(item.href);

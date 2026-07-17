@@ -86,7 +86,7 @@ export default function ProfilePage() {
   const currentDisplayImage = previewUrl || user?.image;
 
   return (
-    <div className="flex flex-col gap-6 max-w-2xl mx-auto w-full pt-4">
+    <div className="flex flex-col gap-6 w-full max-w-5xl pt-4">
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-[#1a1a1a] dark:text-white tracking-tight transition-colors">
           Manage Profile

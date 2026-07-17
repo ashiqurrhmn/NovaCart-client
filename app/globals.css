@@ -5,6 +5,7 @@
 :root {
   --background: #f5f0eb;
   --foreground: #1a1a1a;
+  --toploader-color: #111111;
 }
 
 @theme inline {
@@ -15,6 +16,7 @@
 .dark {
   --background: #111111;
   --foreground: #ededed;
+  --toploader-color: #ffffff;
 }
 
 body {

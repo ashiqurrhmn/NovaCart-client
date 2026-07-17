@@ -6,6 +6,7 @@ import "@fontsource/elms-sans/700.css";
 import "@fontsource/elms-sans/800.css";
 import "@fontsource/elms-sans/900.css";
 import "./globals.css";
+import NextTopLoader from 'nextjs-toploader';
 import { ConditionalNavbar } from "@/components/conditional-navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -33,6 +34,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <NextTopLoader color="var(--toploader-color)" showSpinner={false} height={3} />
           <ConditionalNavbar />
           <main className="flex-1 flex flex-col">
             {children}

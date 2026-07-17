@@ -6,8 +6,8 @@ import { Navbar } from "./navbar";
 export function ConditionalNavbar() {
   const pathname = usePathname();
   
-  // Hide navbar on login, signup, and dashboard pages
-  if (pathname === "/login" || pathname === "/signup" || pathname.startsWith("/dashboard")) {
+  // Hide navbar on auth and dashboard pages
+  if (pathname === "/login" || pathname === "/signup" || pathname.startsWith("/buyer/dashboard") || pathname.startsWith("/admin/dashboard")) {
     return null;
   }
   

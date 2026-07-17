@@ -97,7 +97,7 @@ export function Navbar() {
                 Cart (0)
               </Link>
               <Link
-                href="/dashboard"
+                href={user.role === "admin" ? "/admin/dashboard" : "/buyer/dashboard"}
                 className="flex items-center gap-1.5 text-[11px] font-medium tracking-[0.12em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity"
               >
                 <User className="w-[14px] h-[14px]" />
