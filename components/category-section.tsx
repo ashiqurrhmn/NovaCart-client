@@ -28,7 +28,7 @@ export function CategorySection() {
   ];
 
   return (
-    <section className="w-full mt-20 bg-[#111111] py-6 sm:py-10 px-6 lg:px-12 flex justify-center border-t border-white/10">
+    <section className="w-full mt-20 bg-[#111111] dark:bg-[#151515] py-6 sm:py-10 px-6 lg:px-12 flex justify-center border-t border-neutral-200 dark:border-white/10 transition-colors">
       <div className="w-full max-w-[1440px]">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 lg:gap-16">
           {categories.map((cat, idx) => (
@@ -45,10 +45,10 @@ export function CategorySection() {
               
               {/* Text */}
               <div className="flex flex-col">
-                <h3 className="text-white text-lg sm:text-xl font-medium tracking-widest uppercase mb-3">
+                <h3 className="text-white text-lg sm:text-xl font-medium tracking-widest uppercase mb-3 transition-colors">
                   {cat.title}
                 </h3>
-                <p className="text-neutral-400 text-xs sm:text-[13px] leading-relaxed mb-6 max-w-[160px]">
+                <p className="text-neutral-400 text-xs sm:text-[13px] leading-relaxed mb-6 max-w-[160px] transition-colors">
                   {cat.description}
                 </p>
                 <Link
