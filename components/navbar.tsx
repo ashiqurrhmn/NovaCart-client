@@ -48,7 +48,7 @@ export function Navbar() {
             Kids
           </Link>
           <Link
-            href="/shop/shop"
+            href="/shop"
             className="text-[11px] font-medium tracking-[0.15em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity"
           >
             Browse all
@@ -155,6 +155,13 @@ export function Navbar() {
         }`}
       >
         <div className="px-6 py-5 bg-[#f5f0eb] dark:bg-[#111111] border-t border-[#e8e2db] dark:border-[#222222] space-y-1">
+          <Link
+            href="/shop"
+            className="block py-2.5 text-[12px] font-medium tracking-[0.15em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Browse All
+          </Link>
           {["Men", "Women", "Kids", "Beauty"].map((item) => (
             <Link
               key={item}
