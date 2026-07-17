@@ -48,10 +48,10 @@ export function Navbar() {
             Kids
           </Link>
           <Link
-            href="/shop/beauty"
+            href="/shop/shop"
             className="text-[11px] font-medium tracking-[0.15em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity"
           >
-            Beauty
+            Browse all
           </Link>
         </nav>
 
@@ -81,13 +81,7 @@ export function Navbar() {
 
           {isLoggedIn ? (
             <>
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-1.5 text-[11px] font-medium tracking-[0.12em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity"
-              >
-                <User className="w-[14px] h-[14px]" />
-                {user.name?.split(" ")[0]}
-              </Link>
+              
               <Link
                 href="/wishlist"
                 className="flex items-center gap-1.5 text-[11px] font-medium tracking-[0.12em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity"
@@ -101,6 +95,13 @@ export function Navbar() {
               >
                 <ShoppingBag className="w-[14px] h-[14px]" />
                 Cart (0)
+              </Link>
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-1.5 text-[11px] font-medium tracking-[0.12em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity"
+              >
+                <User className="w-[14px] h-[14px]" />
+                {user.name?.split(" ")[0]}
               </Link>
               <button
                 onClick={handleLogout}

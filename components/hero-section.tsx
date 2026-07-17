@@ -69,7 +69,7 @@ export function HeroSection() {
               <br />
               Collection
               <br />
-              2025
+              2026
             </p>
           </div>
         </div>
