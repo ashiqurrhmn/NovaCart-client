@@ -171,9 +171,40 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
 
   if (isLoading) {
     return (
-      <div className="pt-20 flex flex-col items-center justify-center text-neutral-500">
-        <Loader2 className="w-8 h-8 animate-spin mb-4" />
-        <p>Loading product details...</p>
+      <div className="pt-4 w-full animate-pulse">
+        <div className="w-24 h-4 bg-neutral-200 dark:bg-neutral-800 rounded mb-4"></div>
+        <div className="w-48 h-8 bg-neutral-200 dark:bg-neutral-800 rounded mb-2"></div>
+        <div className="w-64 h-4 bg-neutral-200 dark:bg-neutral-800 rounded mb-8"></div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="space-y-5">
+            <div>
+              <div className="w-32 h-4 bg-neutral-200 dark:bg-neutral-800 rounded mb-2"></div>
+              <div className="w-full h-12 bg-neutral-200 dark:bg-neutral-800 rounded-xl"></div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <div className="w-20 h-4 bg-neutral-200 dark:bg-neutral-800 rounded mb-2"></div>
+                <div className="w-full h-12 bg-neutral-200 dark:bg-neutral-800 rounded-xl"></div>
+              </div>
+              <div>
+                <div className="w-20 h-4 bg-neutral-200 dark:bg-neutral-800 rounded mb-2"></div>
+                <div className="w-full h-12 bg-neutral-200 dark:bg-neutral-800 rounded-xl"></div>
+              </div>
+            </div>
+            <div>
+              <div className="w-24 h-4 bg-neutral-200 dark:bg-neutral-800 rounded mb-2"></div>
+              <div className="w-full h-32 bg-neutral-200 dark:bg-neutral-800 rounded-xl"></div>
+            </div>
+          </div>
+          <div>
+            <div className="w-32 h-4 bg-neutral-200 dark:bg-neutral-800 rounded mb-2"></div>
+            <div className="w-full h-[260px] lg:h-[300px] bg-neutral-200 dark:bg-neutral-800 rounded-2xl"></div>
+          </div>
+        </div>
+        <div className="pt-8">
+          <div className="w-full sm:w-40 h-12 bg-neutral-200 dark:bg-neutral-800 rounded-xl"></div>
+        </div>
       </div>
     );
   }

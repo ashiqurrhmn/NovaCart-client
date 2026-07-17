@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Search, Package, Sparkles, Star, Tag, ChevronDown, Home, Music, Smartphone, HardDrive } from "lucide-react";
+import { Search, Package, Sparkles, Star, Tag, ChevronDown, Home, Music, Smartphone, HardDrive, ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductCard } from "@/components/product-card";
 
 interface Product {
@@ -34,6 +34,8 @@ export default function ShopPageClient({ products }: { products: Product[] }) {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryOpen, setCategoryOpen] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 18;
 
   const filteredProducts = products.filter((p) => {
     const cat = p.category?.toLowerCase() || "";
@@ -42,6 +44,10 @@ export default function ShopPageClient({ products }: { products: Product[] }) {
     const matchSearch = name.includes(searchQuery.toLowerCase());
     return matchCat && matchSearch;
   });
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <div className="flex-1 bg-[#f5f0eb] dark:bg-[#111111] min-h-screen overflow-x-hidden">
@@ -75,7 +81,10 @@ export default function ShopPageClient({ products }: { products: Product[] }) {
                 type="text"
                 placeholder="Search on NovaCart"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="bg-transparent text-sm text-[#333] dark:text-[#e0e0e0] placeholder:text-[#aaa] dark:placeholder:text-[#666] outline-none w-full min-w-0"
               />
             </div>
@@ -113,7 +122,10 @@ export default function ShopPageClient({ products }: { products: Product[] }) {
                     return (
                       <button
                         key={cat.key}
-                        onClick={() => setActiveCategory(cat.key)}
+                        onClick={() => {
+                          setActiveCategory(cat.key);
+                          setCurrentPage(1);
+                        }}
                         className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm transition-colors ${
                           isActive
                             ? "bg-[#1a1a1a] text-white dark:bg-[#e0e0e0] dark:text-[#1a1a1a] font-semibold"
@@ -163,7 +175,10 @@ export default function ShopPageClient({ products }: { products: Product[] }) {
                 return (
                   <button
                     key={cat.key}
-                    onClick={() => setActiveCategory(cat.key)}
+                    onClick={() => {
+                      setActiveCategory(cat.key);
+                      setCurrentPage(1);
+                    }}
                     className={`px-3 sm:px-4 py-2 rounded-full text-[11px] sm:text-xs font-semibold whitespace-nowrap border transition-colors ${
                       isActive
                         ? "bg-[#1a1a1a] text-white border-[#1a1a1a] dark:bg-[#e0e0e0] dark:text-[#1a1a1a] dark:border-[#e0e0e0]"
@@ -176,17 +191,61 @@ export default function ShopPageClient({ products }: { products: Product[] }) {
               })}
             </div>
 
-            {filteredProducts.length === 0 ? (
+            {paginatedProducts.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-[#999]">
                 <Package className="w-12 h-12 mb-4 opacity-40" />
                 <p className="text-lg font-medium">No products found</p>
                 <p className="text-sm mt-1">Try changing your search or filter</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
-                {filteredProducts.map((product) => (
-                  <ProductCard key={product._id} product={product} />
-                ))}
+              <div className="flex flex-col gap-8">
+                <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+                  {paginatedProducts.map((product) => (
+                    <ProductCard key={product._id} product={product} />
+                  ))}
+                </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 pt-6 border-t border-[#e8e8e8] dark:border-[#333]">
+                    <span className="text-sm text-[#555] dark:text-[#aaa]">
+                      Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="p-2 text-[#555] dark:text-[#aaa] hover:text-[#1a1a1a] dark:hover:text-white border border-[#e8e8e8] dark:border-[#333] rounded-lg disabled:opacity-50 transition-colors"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      
+                      <div className="flex gap-1 overflow-x-auto max-w-[200px] sm:max-w-none px-1">
+                        {Array.from({ length: totalPages }).map((_, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setCurrentPage(i + 1)}
+                            className={`min-w-[36px] h-9 px-2 text-sm font-medium rounded-lg transition-colors ${
+                              currentPage === i + 1 
+                                ? "bg-[#1a1a1a] text-white dark:bg-[#e0e0e0] dark:text-[#1a1a1a]" 
+                                : "text-[#555] dark:text-[#aaa] border border-[#e8e8e8] dark:border-[#333] hover:bg-[#f5f5f5] dark:hover:bg-[#252525]"
+                            }`}
+                          >
+                            {i + 1}
+                          </button>
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className="p-2 text-[#555] dark:text-[#aaa] hover:text-[#1a1a1a] dark:hover:text-white border border-[#e8e8e8] dark:border-[#333] rounded-lg disabled:opacity-50 transition-colors"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

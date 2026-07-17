@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Search, Trash2, Edit, Loader2, Package, AlertCircle } from "lucide-react";
+import { Search, Trash2, Edit, Loader2, Package, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 interface Product {
@@ -21,6 +21,13 @@ export default function ManageProductsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   useEffect(() => {
     fetchProducts();
@@ -41,24 +48,23 @@ export default function ManageProductsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this product? This action cannot be undone.")) {
-      return;
-    }
+  const handleDelete = async () => {
+    if (!itemToDelete) return;
 
     try {
-      setDeletingId(id);
-      const res = await fetch(`http://localhost:5000/products/${id}`, {
+      setDeletingId(itemToDelete);
+      const res = await fetch(`http://localhost:5000/products/${itemToDelete}`, {
         method: "DELETE",
       });
 
       if (!res.ok) throw new Error("Failed to delete product");
 
-      setProducts((prev) => prev.filter((p) => p._id !== id));
+      setProducts((prev) => prev.filter((p) => p._id !== itemToDelete));
     } catch (err) {
       alert("Failed to delete product. Please try again.");
     } finally {
       setDeletingId(null);
+      setItemToDelete(null);
     }
   };
 
@@ -66,6 +72,10 @@ export default function ManageProductsPage() {
     const name = (p.title || p.name || "").toLowerCase();
     return name.includes(searchQuery.toLowerCase());
   });
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <div className="pt-4">
@@ -129,13 +139,27 @@ export default function ManageProductsPage() {
             </thead>
             <tbody className="divide-y divide-[#e0dbd5] dark:divide-[#333]">
               {isLoading ? (
-                <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center">
-                    <Loader2 className="w-6 h-6 animate-spin text-neutral-400 mx-auto mb-2" />
-                    <p className="text-sm text-neutral-500">Loading products...</p>
-                  </td>
-                </tr>
-              ) : filteredProducts.length === 0 ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse border-b border-[#e0dbd5] dark:border-[#333]">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-lg bg-neutral-200 dark:bg-neutral-800"></div>
+                        <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-32"></div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="h-5 bg-neutral-200 dark:bg-neutral-800 rounded-full w-24"></div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-16"></div>
+                    </td>
+                    <td className="px-6 py-4 text-right flex justify-end gap-2">
+                      <div className="w-8 h-8 bg-neutral-200 dark:bg-neutral-800 rounded-lg"></div>
+                      <div className="w-8 h-8 bg-neutral-200 dark:bg-neutral-800 rounded-lg"></div>
+                    </td>
+                  </tr>
+                ))
+              ) : paginatedProducts.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-6 py-12 text-center text-neutral-500">
                     <Package className="w-10 h-10 mx-auto mb-3 opacity-20" />
@@ -144,7 +168,7 @@ export default function ManageProductsPage() {
                   </td>
                 </tr>
               ) : (
-                filteredProducts.map((product) => (
+                paginatedProducts.map((product) => (
                   <tr key={product._id} className="hover:bg-[#fafafa] dark:hover:bg-[#151515] transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
@@ -181,7 +205,7 @@ export default function ManageProductsPage() {
                           <Edit className="w-4 h-4" />
                         </Link>
                         <button
-                          onClick={() => handleDelete(product._id)}
+                          onClick={() => setItemToDelete(product._id)}
                           disabled={deletingId === product._id}
                           className="p-2 text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 dark:hover:text-red-400 rounded-lg transition-colors disabled:opacity-50"
                           title="Delete Product"
@@ -200,7 +224,88 @@ export default function ManageProductsPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="px-6 py-4 border-t border-[#e0dbd5] dark:border-[#333] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <span className="text-sm text-neutral-500 dark:text-neutral-400">
+              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 text-neutral-500 hover:text-[#1a1a1a] dark:hover:text-white border border-[#e0dbd5] dark:border-[#333] rounded-md disabled:opacity-50 transition-colors"
+                title="Previous Page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              
+              <div className="flex gap-1 overflow-x-auto max-w-[200px] sm:max-w-none">
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`min-w-[32px] h-8 px-2 text-sm font-medium rounded-md transition-colors ${
+                      currentPage === i + 1 
+                        ? "bg-[#1a1a1a] text-white dark:bg-white dark:text-[#1a1a1a]" 
+                        : "text-neutral-600 dark:text-neutral-400 border border-[#e0dbd5] dark:border-[#333] hover:bg-[#f5f5f5] dark:hover:bg-[#252525]"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 text-neutral-500 hover:text-[#1a1a1a] dark:hover:text-white border border-[#e0dbd5] dark:border-[#333] rounded-md disabled:opacity-50 transition-colors"
+                title="Next Page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {itemToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl border border-[#e0dbd5] dark:border-[#333] animate-in zoom-in-95 duration-200">
+            <div className="p-6">
+              <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-500 flex items-center justify-center mb-4">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-[#1a1a1a] dark:text-white mb-2">Delete Product</h3>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
+                Are you sure you want to delete this product? This action cannot be undone and it will be permanently removed.
+              </p>
+              <div className="flex items-center gap-3 w-full">
+                <button
+                  onClick={() => setItemToDelete(null)}
+                  disabled={deletingId !== null}
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-[#e0dbd5] dark:border-[#333] text-sm font-semibold text-[#1a1a1a] dark:text-white hover:bg-[#f5f5f5] dark:hover:bg-[#252525] transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={deletingId !== null}
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {deletingId !== null ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    "Delete"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
