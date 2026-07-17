@@ -44,7 +44,7 @@ export default function ShopPageClient({ products }: { products: Product[] }) {
   });
 
   return (
-    <div className="flex-1 bg-[#fafafa] dark:bg-[#0e0e0e] min-h-screen overflow-x-hidden">
+    <div className="flex-1 bg-[#f5f0eb] dark:bg-[#111111] min-h-screen overflow-x-hidden">
       {/* Hero Banner */}
       <div className="relative w-full h-[180px] sm:h-[240px] md:h-[360px] overflow-hidden">
         <Image
