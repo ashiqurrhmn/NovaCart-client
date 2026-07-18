@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import toast from "react-hot-toast";
-import { useSession } from "@/app/lib/auth-client";
+import { useSession, authClient } from "@/app/lib/auth-client";
 
 export interface CartItem {
   _id: string;
@@ -40,7 +40,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       setIsLoading(true);
       try {
-        const res = await fetch(`http://localhost:5000/cart/${userId}`);
+        const { data: tokenData } = await authClient.token();
+        const jwtToken = tokenData?.token;
+
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cart/${userId}`, {
+          headers: { "Authorization": `Bearer ${jwtToken}` }
+        });
         if (res.ok) {
           const data = await res.json();
           setCartItems(data.items || []);
@@ -86,9 +91,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
 
     try {
-      await fetch(`http://localhost:5000/cart/${userId}/add`, {
+      const { data: tokenData } = await authClient.token();
+      const jwtToken = tokenData?.token;
+
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cart/${userId}/add`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwtToken}`
+        },
         body: JSON.stringify(item),
       });
     } catch (error) {
@@ -104,8 +115,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     toast.success("Item removed from cart");
 
     try {
-      await fetch(`http://localhost:5000/cart/${userId}/item/${id}`, {
+      const { data: tokenData } = await authClient.token();
+      const jwtToken = tokenData?.token;
+
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cart/${userId}/item/${id}`, {
         method: "DELETE",
+        headers: { "Authorization": `Bearer ${jwtToken}` }
       });
     } catch (error) {
       console.error("Error removing item from DB", error);
@@ -126,9 +141,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
 
     try {
-      await fetch(`http://localhost:5000/cart/${userId}/item/${id}`, {
+      const { data: tokenData } = await authClient.token();
+      const jwtToken = tokenData?.token;
+
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cart/${userId}/item/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwtToken}`
+        },
         body: JSON.stringify({ quantity }),
       });
     } catch (error) {
@@ -143,8 +164,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     toast.success("Cart cleared");
 
     try {
-      await fetch(`http://localhost:5000/cart/${userId}/clear`, {
+      const { data: tokenData } = await authClient.token();
+      const jwtToken = tokenData?.token;
+
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cart/${userId}/clear`, {
         method: "DELETE",
+        headers: { "Authorization": `Bearer ${jwtToken}` }
       });
     } catch (error) {
       console.error("Error clearing cart in DB", error);

@@ -7,6 +7,7 @@ import {
 } from 'recharts';
 import { DollarSign, Package, ShoppingBag, Users, Loader2, TrendingUp } from "lucide-react";
 import toast from "react-hot-toast";
+import { authClient } from "@/app/lib/auth-client";
 
 const COLORS = ['#222222', '#555555', '#888888', '#bbbbbb', '#dddddd'];
 
@@ -25,12 +26,16 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        
+        const { data: tokenData } = await authClient.token();
+        const jwtToken = tokenData?.token;
+        const headers = { "Authorization": `Bearer ${jwtToken}` };
         
         const [ordersRes, productsRes, usersRes] = await Promise.all([
-          fetch(`${apiUrl}/admin/orders`),
+          fetch(`${apiUrl}/admin/orders`, { headers }),
           fetch(`${apiUrl}/products`),
-          fetch(`${apiUrl}/users`)
+          fetch(`${apiUrl}/users`, { headers })
         ]);
 
         const orders = await ordersRes.json();

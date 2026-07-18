@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Search, Trash2, Edit, Loader2, Package, AlertCircle, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import Link from "next/link";
+import { authClient } from "@/app/lib/auth-client";
 
 interface Product {
   _id: string;
@@ -37,7 +38,7 @@ export default function ManageProductsPage() {
     try {
       setIsLoading(true);
       setError("");
-      const res = await fetch("http://localhost:5000/products");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`);
       if (!res.ok) throw new Error("Failed to fetch products");
       const data = await res.json();
       setProducts(data);
@@ -53,8 +54,15 @@ export default function ManageProductsPage() {
 
     try {
       setDeletingId(itemToDelete);
-      const res = await fetch(`http://localhost:5000/products/${itemToDelete}`, {
+      
+      const { data: tokenData } = await authClient.token();
+      const jwtToken = tokenData?.token;
+      
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${itemToDelete}`, {
         method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${jwtToken}`
+        }
       });
 
       if (!res.ok) throw new Error("Failed to delete product");

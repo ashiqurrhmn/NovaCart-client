@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { useSession } from "@/app/lib/auth-client";
+import { useSession, authClient } from "@/app/lib/auth-client";
 import { Upload, Loader2, CheckCircle2, X, ImagePlus, Sparkles } from "lucide-react";
 import Image from "next/image";
 import toast from "react-hot-toast";
@@ -157,9 +157,22 @@ export default function AddProductPage() {
         rating: { rate: 0, count: 0 },
       };
 
-      const res = await fetch("http://localhost:5000/products", {
+      // 3. Get JWT token
+      const { data: tokenData, error: tokenError } = await authClient.token();
+      
+      
+      if (tokenError) {
+        throw new Error("Failed to get authentication token");
+      }
+
+      const jwtToken = tokenData?.token;
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwtToken}`
+        },
         body: JSON.stringify(product),
       });
 

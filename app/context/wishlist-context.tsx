@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import toast from "react-hot-toast";
-import { useSession } from "@/app/lib/auth-client";
+import { useSession, authClient } from "@/app/lib/auth-client";
 
 export interface WishlistItem {
   _id: string;
@@ -39,7 +39,12 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       }
       setIsLoading(true);
       try {
-        const res = await fetch(`http://localhost:5000/wishlist/${userId}`);
+        const { data: tokenData } = await authClient.token();
+        const jwtToken = tokenData?.token;
+
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wishlist/${userId}`, {
+          headers: { "Authorization": `Bearer ${jwtToken}` }
+        });
         if (res.ok) {
           const data = await res.json();
           setWishlistItems(data.items || []);
@@ -77,9 +82,15 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     setWishlistItems((prevItems) => [...prevItems, item]);
 
     try {
-      await fetch(`http://localhost:5000/wishlist/${userId}/add`, {
+      const { data: tokenData } = await authClient.token();
+      const jwtToken = tokenData?.token;
+
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wishlist/${userId}/add`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwtToken}`
+        },
         body: JSON.stringify(item),
       });
     } catch (error) {
@@ -95,8 +106,12 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     toast.success("Item removed from wishlist");
 
     try {
-      await fetch(`http://localhost:5000/wishlist/${userId}/item/${id}`, {
+      const { data: tokenData } = await authClient.token();
+      const jwtToken = tokenData?.token;
+
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wishlist/${userId}/item/${id}`, {
         method: "DELETE",
+        headers: { "Authorization": `Bearer ${jwtToken}` }
       });
     } catch (error) {
       console.error("Error removing item from wishlist DB", error);

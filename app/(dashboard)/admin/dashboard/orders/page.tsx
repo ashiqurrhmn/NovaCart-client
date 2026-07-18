@@ -3,6 +3,7 @@
 import { Package, ChevronDown, ChevronUp, MapPin, User, Mail, Phone, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { authClient } from "@/app/lib/auth-client";
 
 interface OrderItem {
   name: string;
@@ -54,9 +55,23 @@ export default function AdminOrdersPage() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/admin/orders`);
+      const { data: tokenData } = await authClient.token();
+      const jwtToken = tokenData?.token;
+      
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/orders`, {
+        headers: {
+          "Authorization": `Bearer ${jwtToken}`
+        }
+      });
       const data = await res.json();
-      setOrders(data);
+      
+      if (Array.isArray(data)) {
+        setOrders(data);
+      } else {
+        console.error("API did not return an array", data);
+        toast.error(data.message || "Failed to load orders properly");
+        setOrders([]);
+      }
     } catch (error) {
       console.error("Error fetching orders", error);
       toast.error("Failed to load orders");
@@ -71,10 +86,14 @@ export default function AdminOrdersPage() {
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/admin/orders/${orderId}/status`, {
+      const { data: tokenData } = await authClient.token();
+      const jwtToken = tokenData?.token;
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/orders/${orderId}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwtToken}`
         },
         body: JSON.stringify({ status: newStatus }),
       });
@@ -224,9 +243,9 @@ export default function AdminOrdersPage() {
                       className="text-[13px] text-neutral-600 dark:text-neutral-300 bg-transparent border border-neutral-200 dark:border-neutral-700 rounded-md p-1.5 outline-none w-full max-w-[160px] cursor-pointer hover:border-neutral-300 dark:hover:border-neutral-600 transition-colors"
                       defaultValue=""
                     >
-                      <option value="" disabled>{order.items?.length || 0} Item{order.items?.length !== 1 ? 's' : ''}</option>
+                      <option value="" disabled className="bg-white dark:bg-[#1a1a1a] text-[#1a1a1a] dark:text-white">{order.items?.length || 0} Item{order.items?.length !== 1 ? 's' : ''}</option>
                       {order.items?.map((item, idx) => (
-                        <option key={idx} value={idx}>
+                        <option key={idx} value={idx} className="bg-white dark:bg-[#1a1a1a] text-[#1a1a1a] dark:text-white">
                           {item.name} × {item.quantity}
                         </option>
                       ))}
@@ -261,12 +280,12 @@ export default function AdminOrdersPage() {
                       className="text-[13px] font-medium text-[#1a1a1a] dark:text-white bg-transparent border border-neutral-200 dark:border-neutral-700 rounded-md p-1.5 outline-none w-full max-w-[140px] cursor-pointer hover:border-neutral-300 dark:hover:border-neutral-600 transition-colors focus:ring-2 focus:ring-indigo-500 focus:border-neutral-400 dark:focus:border-neutral-600"
                     >
                       {statusOptions.map(option => (
-                        <option key={option.value} value={option.value}>
+                        <option key={option.value} value={option.value} className="bg-white dark:bg-[#1a1a1a] text-[#1a1a1a] dark:text-white">
                           {option.label}
                         </option>
                       ))}
                       {isUnknownStatus && (
-                        <option value={currentStatus} disabled className="capitalize">
+                        <option value={currentStatus} disabled className="capitalize bg-white dark:bg-[#1a1a1a] text-[#1a1a1a] dark:text-white">
                           {currentStatus}
                         </option>
                       )}

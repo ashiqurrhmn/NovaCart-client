@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Sparkles, RefreshCw, Copy, Check, Loader2, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
-import { useSession } from "@/app/lib/auth-client";
+import { authClient, useSession } from "@/app/lib/auth-client";
 
 const promptTemplates = [
   {
@@ -53,8 +53,14 @@ export default function AIContentPage() {
     if (userEmail) {
       const fetchHistory = async () => {
         try {
-          const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-          const res = await fetch(`${apiUrl}/ai-history/${encodeURIComponent(userEmail)}`);
+          const { data: tokenData } = await authClient.token();
+          const jwtToken = tokenData?.token;
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+          const res = await fetch(`${apiUrl}/ai-history/${encodeURIComponent(userEmail)}`, {
+            headers: {
+              "Authorization": `Bearer ${jwtToken}`
+            }
+          });
           if (res.ok) {
             const data = await res.json();
             const parsedData = data.map((item: any) => ({
@@ -119,10 +125,15 @@ export default function AIContentPage() {
       // Save to database
       if (userEmail) {
         try {
-          const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+          const { data: tokenData } = await authClient.token();
+          const jwtToken = tokenData?.token;
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL;
           await fetch(`${apiUrl}/ai-history`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${jwtToken}`
+            },
             body: JSON.stringify(newHistoryItem),
           });
         } catch (dbError) {

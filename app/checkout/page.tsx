@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/app/context/cart-context";
-import { useSession } from "@/app/lib/auth-client";
+import { useSession, authClient } from "@/app/lib/auth-client";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import toast from "react-hot-toast";
@@ -63,9 +63,15 @@ export default function CheckoutPage() {
     const loadingToast = toast.loading("Preparing payment...");
     
     try {
+      const { data: tokenData } = await authClient.token();
+      const jwtToken = tokenData?.token;
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/create-payment-intent`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwtToken}`
+        },
         body: JSON.stringify({ items: cartItems }),
       });
       
@@ -76,7 +82,7 @@ export default function CheckoutPage() {
         setStep(2);
         toast.dismiss(loadingToast);
       } else {
-        throw new Error("No client secret returned");
+        throw new Error(data.error || data.message || "No client secret returned");
       }
     } catch (error) {
       console.error(error);
@@ -86,7 +92,7 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="flex-1 w-full bg-[#fcfcfc] dark:bg-[#111111]">
+    <div className="flex-1 w-full bg-background">
       <div className="max-w-[800px] mx-auto px-4 py-8 md:py-12">
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-[#1a1a1a] dark:text-white uppercase mb-8">
           Checkout
@@ -221,9 +227,15 @@ function CheckoutForm({ address, cartItems, totalPrice, userId, user, clearCart,
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
       // Save order to DB
       try {
+        const { data: tokenData } = await authClient.token();
+        const jwtToken = tokenData?.token;
+
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${jwtToken}`
+          },
           body: JSON.stringify({
             userId,
             userName: user?.name,

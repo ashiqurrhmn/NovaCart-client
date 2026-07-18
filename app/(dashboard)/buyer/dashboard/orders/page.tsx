@@ -9,7 +9,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useSession } from "@/app/lib/auth-client";
+import { authClient, useSession } from "@/app/lib/auth-client";
 
 interface OrderItem {
   name: string;
@@ -65,7 +65,14 @@ export default function OrdersPage() {
     const fetchOrders = async () => {
       if (session?.user?.id) {
         try {
-          const res = await fetch(`http://localhost:5000/orders/${session.user.id}`);
+          const { data: tokenData } = await authClient.token();
+          const jwtToken = tokenData?.token;
+          
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/${session.user.id}`, {
+            headers: {
+              "Authorization": `Bearer ${jwtToken}`
+            }
+          });
           const data = await res.json();
           setOrders(data);
         } catch (error) {

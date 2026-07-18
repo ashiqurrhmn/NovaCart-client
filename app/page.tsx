@@ -10,7 +10,7 @@ import { TestimonialsSection } from "@/components/testimonials-section";
 
 async function getProducts() {
   try {
-    const res = await fetch("http://localhost:5000/products", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
       cache: "no-store",
     });
     if (!res.ok) return [];

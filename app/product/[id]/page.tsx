@@ -23,7 +23,7 @@ interface Product {
 async function getProduct(id: string): Promise<Product | null> {
   try {
     // Adding no-store to always fetch the latest details
-    const res = await fetch(`http://localhost:5000/products/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, {
       cache: "no-store",
     });
     

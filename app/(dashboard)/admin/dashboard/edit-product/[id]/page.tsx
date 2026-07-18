@@ -5,6 +5,7 @@ import { Upload, Loader2, CheckCircle2, X, ImagePlus, ArrowLeft } from "lucide-r
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { authClient } from "@/app/lib/auth-client";
 
 const CATEGORIES = [
   "men's clothing",
@@ -39,7 +40,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/products/${productId}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${productId}`);
         if (!res.ok) {
           if (res.status === 404) throw new Error("Product not found");
           throw new Error("Failed to fetch product");
@@ -148,10 +149,16 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         category: formData.category,
         image: finalImageUrl,
       };
+      
+      const { data: tokenData } = await authClient.token();
+      const jwtToken = tokenData?.token;
 
-      const res = await fetch(`http://localhost:5000/products/${productId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${productId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwtToken}`
+        },
         body: JSON.stringify(product),
       });
 

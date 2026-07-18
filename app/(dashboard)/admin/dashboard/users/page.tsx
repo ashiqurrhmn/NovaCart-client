@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Search, Trash2, Loader2, Users, AlertCircle, Shield, User as UserIcon } from "lucide-react";
 import Image from "next/image";
+import { authClient } from "@/app/lib/auth-client";
 
 interface User {
   _id: string;
@@ -28,7 +29,16 @@ export default function ManageUsersPage() {
     try {
       setIsLoading(true);
       setError("");
-      const res = await fetch("http://localhost:5000/users");
+      
+      const { data: tokenData } = await authClient.token();
+      const jwtToken = tokenData?.token;
+      
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+        headers: {
+          "Authorization": `Bearer ${jwtToken}`
+        }
+      });
+      
       if (!res.ok) throw new Error("Failed to fetch users");
       const data = await res.json();
       setUsers(data);
@@ -44,8 +54,15 @@ export default function ManageUsersPage() {
 
     try {
       setDeletingId(userToDelete);
-      const res = await fetch(`http://localhost:5000/users/${userToDelete}`, {
+      
+      const { data: tokenData } = await authClient.token();
+      const jwtToken = tokenData?.token;
+      
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userToDelete}`, {
         method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${jwtToken}`
+        }
       });
 
       if (!res.ok) throw new Error("Failed to delete user");

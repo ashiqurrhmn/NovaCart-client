@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "@/app/lib/auth-client";
+import { authClient, useSession } from "@/app/lib/auth-client";
 import {
   Package,
   CreditCard,
@@ -34,8 +34,14 @@ export default function DashboardPage() {
     const fetchOrders = async () => {
       if (session?.user?.id) {
         try {
-          const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-          const res = await fetch(`${apiUrl}/orders/${session.user.id}`);
+          const { data: tokenData } = await authClient.token();
+          const jwtToken = tokenData?.token;
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+          const res = await fetch(`${apiUrl}/orders/${session.user.id}`, {
+            headers: {
+              "Authorization": `Bearer ${jwtToken}`
+            }
+          });
           const data = await res.json();
           setOrders(data);
         } catch (error) {

@@ -166,9 +166,15 @@ export function Navbar() {
             <div className="hidden lg:flex items-center gap-4 pl-4 border-l border-neutral-200 dark:border-neutral-800">
               <Link
                 href="/login"
-                className="flex items-center text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity"
+                className="text-[12px] font-bold tracking-[0.15em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0] hover:text-neutral-500 transition-colors"
               >
-                <User className="w-[18px] h-[18px]" />
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className="text-[12px] font-bold tracking-[0.15em] uppercase bg-[#1a1a1a] dark:bg-white text-white dark:text-[#1a1a1a] px-4 py-2 rounded-full hover:opacity-80 transition-opacity"
+              >
+                Sign Up
               </Link>
               <ThemeToggle showText={false} className="flex items-center text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity" />
             </div>
@@ -233,13 +239,22 @@ export function Navbar() {
                 </button>
               </div>
             ) : (
-              <Link
-                href="/login"
-                className="block py-2 text-[12px] font-bold tracking-[0.15em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0]"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Login to Account
-              </Link>
+              <div className="flex flex-col gap-2">
+                <Link
+                  href="/login"
+                  className="block py-2 text-[12px] font-bold tracking-[0.15em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0]"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className="block py-2 text-[12px] font-bold tracking-[0.15em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0]"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </div>
             )}
           </div>
         </div>

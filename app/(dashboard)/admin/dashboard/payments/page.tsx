@@ -3,6 +3,7 @@
 import { CreditCard, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { authClient } from "@/app/lib/auth-client";
 
 interface Order {
   _id: string;
@@ -21,7 +22,14 @@ export default function PaymentHistoryPage() {
 
   const fetchPayments = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/admin/orders`);
+      const { data: tokenData } = await authClient.token();
+      const jwtToken = tokenData?.token;
+      
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/orders`, {
+        headers: {
+          "Authorization": `Bearer ${jwtToken}`
+        }
+      });
       const data = await res.json();
       setPayments(data);
     } catch (error) {
