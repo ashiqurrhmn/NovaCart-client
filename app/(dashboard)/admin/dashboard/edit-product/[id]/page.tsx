@@ -345,6 +345,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                   alt="Preview"
                   fill
                   className="object-contain p-4"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                 />
                 <button
                   type="button"

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Search, Trash2, Edit, Loader2, Package, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Trash2, Edit, Loader2, Package, AlertCircle, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import Link from "next/link";
 
 interface Product {
@@ -178,6 +178,7 @@ export default function ManageProductsPage() {
                             alt={product.title || product.name || "Product"}
                             fill
                             className="object-cover"
+                            sizes="48px"
                           />
                         </div>
                         <span className="font-medium text-[#1a1a1a] dark:text-white text-sm line-clamp-2">
@@ -197,6 +198,13 @@ export default function ManageProductsPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
+                        <Link
+                          href={`/product/${product._id}`}
+                          className="p-2 text-neutral-400 hover:text-[#1a1a1a] dark:hover:text-white hover:bg-[#f0ebe5] dark:hover:bg-[#333] rounded-lg transition-colors inline-block"
+                          title="View Product"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Link>
                         <Link
                           href={`/admin/dashboard/edit-product/${product._id}`}
                           className="p-2 text-neutral-400 hover:text-[#1a1a1a] dark:hover:text-white hover:bg-[#f0ebe5] dark:hover:bg-[#333] rounded-lg transition-colors inline-block"

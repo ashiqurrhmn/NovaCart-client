@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export function HeroSection() {
   return (
-    <section className="relative w-full h-[calc(100vh-56px)] min-h-[480px] max-h-[550px] sm:max-h-[720px] overflow-hidden bg-[#f5f0eb] dark:bg-[#111111] flex items-end">
+    <section className="relative w-full h-[calc(100vh-56px)] min-h-[480px] max-h-[550px] sm:max-h-[720px] overflow-hidden bg-[#f5f0eb] dark:bg-[#111111] mt-13 flex items-end">
       {/* Giant background brand text */}
       <div className="absolute inset-0 z-[1] flex items-center justify-center pointer-events-none overflow-hidden mt-[8vh] sm:mt-[12vh]">
         <h1
@@ -53,7 +53,7 @@ export function HeroSection() {
               Shop Now
             </Link>
             <Link
-              href="/shop/new"
+              href="/shop?section=New%20Arrival"
               className="inline-flex items-center justify-center h-10 sm:h-11 px-4 sm:px-7 border border-[#1a1a1a] dark:border-[#e0e0e0] text-[#1a1a1a] dark:text-[#e0e0e0] text-[10px] sm:text-[11px] font-semibold tracking-[0.15em] uppercase hover:bg-[#1a1a1a] hover:text-white dark:hover:bg-[#e0e0e0] dark:hover:text-[#111111] transition-colors w-full sm:w-auto"
             >
               Explore New In

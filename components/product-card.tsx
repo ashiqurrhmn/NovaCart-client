@@ -1,6 +1,11 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart, Heart } from "lucide-react";
+import { ShoppingCart, Heart, Star } from "lucide-react";
+import { useCart } from "@/app/context/cart-context";
+import { useWishlist } from "@/app/context/wishlist-context";
+import { useSession } from "@/app/lib/auth-client";
 
 interface Product {
   _id: string;
@@ -11,6 +16,7 @@ interface Product {
   image?: string;
   imageUrl?: string;
   category?: string;
+  rating?: { rate: number; count: number };
 }
 
 interface ProductCardProps {
@@ -18,10 +24,23 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+  const { data: session } = useSession();
   const name = product.name || product.title || "Unknown Product";
   const image = product.image || product.imageUrl || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800";
   const price = product.price || 0;
   const category = product.category || "Uncategorized";
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigating to product if nested in a link (though it's outside link here)
+    addToCart({
+      _id: product._id,
+      name,
+      price,
+      image,
+    });
+  };
 
   return (
     <div className="group flex flex-col bg-white dark:bg-[#1a1a1a] rounded-sm overflow-hidden border border-[#e8e2db] dark:border-[#333333] transition-all hover:shadow-lg">
@@ -45,23 +64,40 @@ export function ProductCard({ product }: ProductCardProps) {
             {name}
           </h3>
         </Link>
+        {product.rating && (
+          <div className="flex items-center gap-1 mt-1.5">
+            <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-[#f59e0b] text-[#f59e0b]" />
+            <span className="text-[10px] sm:text-[11px] font-medium text-neutral-500 dark:text-neutral-400">
+              {product.rating.rate} ({product.rating.count})
+            </span>
+          </div>
+        )}
         <div className="mt-auto pt-3 flex items-center justify-between">
           <span className="text-xs sm:text-sm font-semibold text-[#1a1a1a] dark:text-[#f0f0f0]">
             ${price.toFixed(2)}
           </span>
           <div className="flex items-center gap-1 sm:gap-2">
-            <button 
-              className="p-2 text-[#999] hover:text-red-500 dark:text-[#666] dark:hover:text-red-400 transition-colors flex items-center justify-center"
-              aria-label="Add to wishlist"
-            >
-              <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </button>
-            <button 
-              className="p-2 bg-[#1a1a1a] dark:bg-[#e0e0e0] text-white dark:text-[#1a1a1a] rounded-sm hover:opacity-80 transition-opacity flex items-center justify-center"
-              aria-label="Add to cart"
-            >
-              <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </button>
+            {session?.user?.role !== "admin" && (
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  toggleWishlist({ _id: product._id, name, price, image });
+                }}
+                className="p-2 text-[#999] hover:text-red-500 dark:text-[#666] dark:hover:text-red-400 transition-colors flex items-center justify-center"
+                aria-label="Add to wishlist"
+              >
+                <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isInWishlist(product._id) ? "fill-red-500 text-red-500" : ""}`} />
+              </button>
+            )}
+            {session?.user?.role !== "admin" && (
+              <button 
+                onClick={handleAddToCart}
+                className="p-2 bg-[#1a1a1a] dark:bg-[#e0e0e0] text-white dark:text-[#1a1a1a] rounded-sm hover:opacity-80 transition-opacity flex items-center justify-center"
+                aria-label="Add to cart"
+              >
+                <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              </button>
+            )}
           </div>
         </div>
       </div>

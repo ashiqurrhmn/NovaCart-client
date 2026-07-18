@@ -10,6 +10,9 @@ import NextTopLoader from 'nextjs-toploader';
 import { ConditionalNavbar } from "@/components/conditional-navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { CartProvider } from "@/app/context/cart-context";
+import { WishlistProvider } from "@/app/context/wishlist-context";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "NovaCart | Premium Tech Store",
@@ -34,12 +37,17 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NextTopLoader color="var(--toploader-color)" showSpinner={false} height={3} />
-          <ConditionalNavbar />
-          <main className="flex-1 flex flex-col">
-            {children}
-          </main>
-          <ThemeToggle />
+          <WishlistProvider>
+            <CartProvider>
+              <NextTopLoader color="var(--toploader-color)" showSpinner={false} height={3} />
+              <Toaster position="bottom-right" />
+              <ConditionalNavbar />
+              <main className="flex-1 flex flex-col">
+                {children}
+              </main>
+              <ThemeToggle />
+            </CartProvider>
+          </WishlistProvider>
         </ThemeProvider>
       </body>
     </html>

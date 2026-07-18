@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import ShopPageClient from "@/components/shop-page-client";
+import ShopLoading from "./loading";
 
 async function getProducts() {
   try {
@@ -20,5 +22,9 @@ async function getProducts() {
 export default async function ShopPage() {
   const products = await getProducts();
 
-  return <ShopPageClient products={products} />;
+  return (
+    <Suspense fallback={<ShopLoading />}>
+      <ShopPageClient products={products} />
+    </Suspense>
+  );
 }

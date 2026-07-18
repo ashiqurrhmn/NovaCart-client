@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ShoppingCart, Heart, Star, Truck, ShieldCheck, ArrowLeftRight } from "lucide-react";
 import { notFound } from "next/navigation";
+import { AddToCartButton } from "@/components/add-to-cart-button";
+import { WishlistButton } from "@/components/wishlist-button";
 
 interface Product {
   _id: string;
@@ -117,14 +119,22 @@ export default async function ProductDetailsPage({
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
-              <button className="flex-1 flex items-center justify-center gap-3 bg-[#1a1a1a] dark:bg-white text-white dark:text-[#1a1a1a] px-8 py-4 rounded-xl font-bold text-sm hover:opacity-80 transition-opacity">
-                <ShoppingCart className="w-5 h-5" />
-                Add to Cart
-              </button>
-              <button className="flex items-center justify-center gap-3 bg-white dark:bg-[#1a1a1a] border-2 border-[#e8e2db] dark:border-[#333] text-[#1a1a1a] dark:text-white px-8 py-4 rounded-xl font-bold text-sm hover:bg-[#f5f0eb] dark:hover:bg-[#252525] transition-colors">
-                <Heart className="w-5 h-5" />
-                Wishlist
-              </button>
+              <AddToCartButton 
+                product={{
+                  _id: product._id,
+                  name: name,
+                  price: price,
+                  image: image,
+                }} 
+              />
+              <WishlistButton
+                product={{
+                  _id: product._id,
+                  name: name,
+                  price: price,
+                  image: image,
+                }}
+              />
             </div>
 
             {/* Feature Highlights */}

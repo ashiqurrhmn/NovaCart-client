@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Search, Package, Sparkles, Star, Tag, ChevronDown, Home, Music, Smartphone, HardDrive, ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductCard } from "@/components/product-card";
@@ -31,19 +32,57 @@ const SIDEBAR_SECTIONS = [
 ];
 
 export default function ShopPageClient({ products }: { products: Product[] }) {
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+  const sectionParam = searchParams.get("section");
+  const qParam = searchParams.get("q");
+
+  const [activeCategory, setActiveCategory] = useState(categoryParam || "all");
+  const [searchQuery, setSearchQuery] = useState(qParam || "");
   const [categoryOpen, setCategoryOpen] = useState(true);
+  const [activeSection, setActiveSection] = useState(sectionParam || "");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 18;
 
-  const filteredProducts = products.filter((p) => {
+  useEffect(() => {
+    let changed = false;
+    if (categoryParam !== null) {
+      setActiveCategory(categoryParam);
+      changed = true;
+    }
+    if (sectionParam !== null) {
+      setActiveSection(sectionParam);
+      changed = true;
+    }
+    if (qParam !== null) {
+      setSearchQuery(qParam);
+      changed = true;
+    }
+    if (changed) setCurrentPage(1);
+  }, [categoryParam, sectionParam, qParam]);
+
+  let filteredProducts = products.filter((p) => {
     const cat = p.category?.toLowerCase() || "";
     const matchCat = activeCategory === "all" || cat === activeCategory;
     const name = (p.name || p.title || "").toLowerCase();
     const matchSearch = name.includes(searchQuery.toLowerCase());
     return matchCat && matchSearch;
   });
+
+  if (activeSection === "New Arrival") {
+    // Sort by _id descending (newer products have larger ObjectIds)
+    filteredProducts = [...filteredProducts].sort((a, b) => b._id.localeCompare(a._id));
+  } else if (activeSection === "Best Seller") {
+    // Sort by rating (assuming higher rating = best seller)
+    filteredProducts = [...filteredProducts].sort((a, b) => {
+      const aRating = a.rating?.rate || 0;
+      const bRating = b.rating?.rate || 0;
+      return bRating - aRating;
+    });
+  } else if (activeSection === "On Discount") {
+    // Mock discount filter (e.g., price < 50)
+    filteredProducts = filteredProducts.filter(p => p.price < 50);
+  }
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -59,6 +98,7 @@ export default function ShopPageClient({ products }: { products: Product[] }) {
           fill
           priority
           className="object-cover"
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-black/30" />
         <div className="absolute inset-0 flex items-end justify-center overflow-hidden pb-0">
@@ -150,16 +190,26 @@ export default function ShopPageClient({ products }: { products: Product[] }) {
             <div className="space-y-1 border-t border-[#e8e8e8] dark:border-[#333] pt-4">
               {SIDEBAR_SECTIONS.map((section) => {
                 const Icon = section.icon;
+                const isActive = activeSection === section.label;
                 return (
                   <button
                     key={section.label}
-                    className="flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm text-[#555] dark:text-[#aaa] hover:bg-[#f0f0f0] dark:hover:bg-[#252525] transition-colors"
+                    onClick={() => {
+                      setActiveSection(isActive ? "" : section.label);
+                      setCurrentPage(1);
+                    }}
+                    className={`flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                      isActive
+                        ? "bg-[#1a1a1a] text-white dark:bg-[#e0e0e0] dark:text-[#1a1a1a] font-semibold"
+                        : "text-[#555] dark:text-[#aaa] hover:bg-[#f0f0f0] dark:hover:bg-[#252525]"
+                    }`}
                   >
                     <div className="flex items-center gap-3">
                       <Icon className="w-4 h-4" />
                       <span>{section.label}</span>
                     </div>
-                    <ChevronDown className="w-3.5 h-3.5 text-[#bbb]" />
+                    {/* Hide chevron if it's active as it's now a toggle filter */}
+                    {!isActive && <ChevronDown className="w-3.5 h-3.5 text-[#bbb]" />}
                   </button>
                 );
               })}

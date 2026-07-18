@@ -8,21 +8,21 @@ export function CategorySection() {
       title: "MEN",
       description: "Elevated everyday essentials.",
       image: "/assets/stat-men.jpg",
-      link: "/shop/men",
+      link: "/shop?category=men's%20clothing",
       linkText: "SHOP MEN",
     },
     {
       title: "WOMEN",
       description: "Effortless style for every you.",
       image: "/assets/stat-women.jpg",
-      link: "/shop/women",
+      link: "/shop?category=women's%20clothing",
       linkText: "SHOP WOMEN",
     },
     {
       title: "KIDS",
       description: "Comfort meets cool everyday.",
       image: "/assets/stat-kid.jpg",
-      link: "/shop/kids",
+      link: "/shop?category=kids'%20clothing",
       linkText: "SHOP KIDS",
     },
   ];
@@ -40,6 +40,7 @@ export function CategorySection() {
                   alt={cat.title}
                   fill
                   className="object-cover transition-transform duration-700 hover:scale-105"
+                  sizes="(max-width: 640px) 110px, (max-width: 1024px) 130px, 150px"
                 />
               </div>
               
