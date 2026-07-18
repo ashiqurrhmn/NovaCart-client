@@ -110,9 +110,11 @@ export default function OrdersPage() {
       </div>
 
       {/* Orders Table */}
-      <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl overflow-hidden transition-colors">
-        {/* Table Header */}
-        <div className="hidden sm:grid grid-cols-[1.2fr_1fr_2fr_1fr_1fr] gap-4 px-6 py-3.5 border-b border-neutral-100 dark:border-neutral-800">
+      <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl overflow-hidden transition-colors border border-neutral-100 dark:border-neutral-800 shadow-sm">
+        <div className="overflow-x-auto">
+          <div className="min-w-[800px]">
+            {/* Table Header */}
+            <div className="grid grid-cols-[1.2fr_1fr_2fr_1fr_1fr] gap-4 px-6 py-3.5 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50">
           <span className="text-[10px] font-semibold tracking-[0.15em] uppercase text-neutral-400">
             Order ID
           </span>
@@ -147,7 +149,7 @@ export default function OrdersPage() {
             return (
               <div
                 key={order._id}
-                className="grid grid-cols-1 sm:grid-cols-[1.2fr_1fr_2fr_1fr_1fr] gap-2 sm:gap-4 px-6 py-4 border-b border-neutral-50 dark:border-neutral-800/50 last:border-0 hover:bg-neutral-50/50 dark:hover:bg-white/[0.02] transition-colors"
+                className="grid grid-cols-[1.2fr_1fr_2fr_1fr_1fr] gap-4 px-6 py-4 border-b border-neutral-50 dark:border-neutral-800/50 last:border-0 hover:bg-neutral-50/50 dark:hover:bg-white/[0.02] transition-colors items-center"
               >
                 {/* Order ID */}
                 <div className="flex items-center">
@@ -197,7 +199,9 @@ export default function OrdersPage() {
               </div>
             );
           })
-        )}
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
