@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, ShoppingBag, LogOut, Menu, X, LayoutDashboard, Users, PlusCircle, Package, CreditCard } from "lucide-react";
+import { User, ShoppingBag, LogOut, Menu, X, LayoutDashboard, Users, PlusCircle, Package, CreditCard, Sparkles } from "lucide-react";
 import { signOut, useSession } from "@/app/lib/auth-client";
 import { useRouter } from "next/navigation";
 
@@ -20,6 +20,7 @@ const adminSidebarItems = [
   { label: "Add Product", href: "/admin/dashboard/add-product", icon: PlusCircle },
   { label: "Manage Products", href: "/admin/dashboard/products", icon: Package },
   { label: "Payment History", href: "/admin/dashboard/payments", icon: CreditCard },
+  { label: "AI Content", href: "/admin/dashboard/ai-content", icon: Sparkles },
 ];
 
 export function DashboardSidebar() {

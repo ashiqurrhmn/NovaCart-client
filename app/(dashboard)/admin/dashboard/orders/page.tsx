@@ -1,6 +1,6 @@
 "use client";
 
-import { Package, ChevronDown, ChevronUp, MapPin, User, Mail, Phone } from "lucide-react";
+import { Package, ChevronDown, ChevronUp, MapPin, User, Mail, Phone, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -43,6 +43,14 @@ export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredOrders = orders.filter(order => {
+    const query = searchQuery.toLowerCase();
+    const idMatch = order._id.toLowerCase().includes(query);
+    const emailMatch = order.userEmail?.toLowerCase().includes(query) || false;
+    return idMatch || emailMatch;
+  });
 
   const fetchOrders = async () => {
     try {
@@ -103,11 +111,23 @@ export default function AdminOrdersPage() {
             View all orders and update their statuses
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Package className="w-5 h-5 text-neutral-400" />
-          <span className="text-sm font-medium text-[#1a1a1a] dark:text-white transition-colors">
-            {orders.length} orders
-          </span>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="relative w-full sm:w-auto">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+            <input
+              type="text"
+              placeholder="Search by ID or email..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 pr-4 py-2 w-full sm:w-[250px] bg-white dark:bg-[#1a1a1a] border border-neutral-200 dark:border-neutral-700 rounded-xl text-[13px] text-[#1a1a1a] dark:text-white placeholder:text-neutral-400 outline-none focus:border-neutral-400 dark:focus:border-neutral-500 transition-colors shadow-sm"
+            />
+          </div>
+          <div className="flex items-center gap-2 bg-white dark:bg-[#1a1a1a] border border-neutral-100 dark:border-neutral-800 px-3 py-1.5 rounded-lg shadow-sm">
+            <Package className="w-4 h-4 text-neutral-400" />
+            <span className="text-[13px] font-medium text-[#1a1a1a] dark:text-white transition-colors">
+              {filteredOrders.length} orders
+            </span>
+          </div>
         </div>
       </div>
 
@@ -144,12 +164,12 @@ export default function AdminOrdersPage() {
         </div>
 
         {/* Table Rows */}
-        {orders.length === 0 ? (
+        {filteredOrders.length === 0 ? (
           <div className="px-6 py-8 text-center text-sm text-neutral-500 dark:text-neutral-400">
-            No orders found.
+            {searchQuery ? 'No orders match your search.' : 'No orders found.'}
           </div>
         ) : (
-          orders.map((order) => {
+          filteredOrders.map((order) => {
             const dateStr = new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' });
             
             // Map legacy 'paid' status to 'processing'

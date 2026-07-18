@@ -94,6 +94,23 @@ export default function LoginPage() {
           <p className="text-[11px] font-medium tracking-[0.15em] uppercase text-neutral-500 mt-4">
             Welcome Back
           </p>
+          
+          <div className="flex gap-3 justify-center mt-6">
+            <button 
+              type="button" 
+              onClick={() => setFormData({email: 'admin@gmail.com', password: '12345Asdf'})}
+              className="text-[10px] font-semibold tracking-wider uppercase px-3 py-1.5 bg-white dark:bg-[#1a1a1a] border border-[#1a1a1a]/10 dark:border-white/10 rounded hover:border-[#1a1a1a]/30 dark:hover:border-white/30 transition-all text-[#1a1a1a] dark:text-[#ededed] shadow-sm"
+            >
+              Admin Demo
+            </button>
+            <button 
+              type="button" 
+              onClick={() => setFormData({email: 'user@gmail.com', password: '12345Asdf'})}
+              className="text-[10px] font-semibold tracking-wider uppercase px-3 py-1.5 bg-white dark:bg-[#1a1a1a] border border-[#1a1a1a]/10 dark:border-white/10 rounded hover:border-[#1a1a1a]/30 dark:hover:border-white/30 transition-all text-[#1a1a1a] dark:text-[#ededed] shadow-sm"
+            >
+              User Demo
+            </button>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
