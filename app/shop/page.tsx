@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { Suspense } from "react";
 import ShopPageClient from "@/components/shop-page-client";
 import ShopLoading from "./loading";
