@@ -2,8 +2,9 @@
 
 import { useState, useRef } from "react";
 import { useSession } from "@/app/lib/auth-client";
-import { Upload, Loader2, CheckCircle2, X, ImagePlus } from "lucide-react";
+import { Upload, Loader2, CheckCircle2, X, ImagePlus, Sparkles } from "lucide-react";
 import Image from "next/image";
+import toast from "react-hot-toast";
 
 const CATEGORIES = [
   "men's clothing",
@@ -28,6 +29,49 @@ export default function AddProductPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
+
+  const generateDescription = async () => {
+    if (!formData.title.trim()) {
+      setError("Please enter a product title first to generate a description.");
+      return;
+    }
+    
+    setIsGeneratingDesc(true);
+    setError("");
+
+    try {
+      const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY;
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          messages: [
+            { role: "system", content: "You are an expert e-commerce copywriter. Write a compelling, concise product description for the given product. Only return the description text, no introductory phrases. Keep it under 2 short paragraphs." },
+            { role: "user", content: `Product Title: ${formData.title}\nCategory: ${formData.category}` }
+          ],
+          max_tokens: 300,
+          temperature: 0.7,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to generate description");
+      const data = await response.json();
+      const text = data?.choices?.[0]?.message?.content || "";
+      
+      setFormData(prev => ({ ...prev, description: text.trim() }));
+      toast.success("Description generated!");
+    } catch (err) {
+      console.error(err);
+      setError("Failed to generate description with AI.");
+    } finally {
+      setIsGeneratingDesc(false);
+    }
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -235,12 +279,27 @@ export default function AddProductPage() {
 
             {/* Description */}
             <div>
-              <label
-                htmlFor="description"
-                className="block text-xs font-semibold tracking-wide uppercase text-neutral-500 dark:text-neutral-400 mb-2"
-              >
-                Description <span className="text-red-500">*</span>
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label
+                  htmlFor="description"
+                  className="block text-xs font-semibold tracking-wide uppercase text-neutral-500 dark:text-neutral-400"
+                >
+                  Description <span className="text-red-500">*</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={generateDescription}
+                  disabled={isGeneratingDesc || !formData.title.trim()}
+                  className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#1a1a1a] dark:text-white hover:opacity-70 disabled:opacity-50 transition-opacity bg-neutral-100 dark:bg-[#252525] px-3 py-1.5 rounded-lg border border-neutral-200 dark:border-[#333]"
+                >
+                  {isGeneratingDesc ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-3.5 h-3.5" />
+                  )}
+                  AI Generate
+                </button>
+              </div>
               <textarea
                 id="description"
                 name="description"

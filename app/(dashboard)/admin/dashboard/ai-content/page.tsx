@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Sparkles, RefreshCw, Copy, Check, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Sparkles, RefreshCw, Copy, Check, Loader2, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
+import { useSession } from "@/app/lib/auth-client";
 
 const promptTemplates = [
   {
@@ -44,7 +45,31 @@ export default function AIContentPage() {
   const [generatedContent, setGeneratedContent] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [history, setHistory] = useState<{prompt: string, content: string, date: Date}[]>([]);
+  const [history, setHistory] = useState<{prompt: string, content: string, date: Date, _id?: string}[]>([]);
+  const { data: session } = useSession();
+  const userEmail = session?.user?.email;
+
+  useEffect(() => {
+    if (userEmail) {
+      const fetchHistory = async () => {
+        try {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+          const res = await fetch(`${apiUrl}/ai-history/${encodeURIComponent(userEmail)}`);
+          if (res.ok) {
+            const data = await res.json();
+            const parsedData = data.map((item: any) => ({
+              ...item,
+              date: new Date(item.date)
+            }));
+            setHistory(parsedData);
+          }
+        } catch (error) {
+          console.error("Failed to fetch AI history:", error);
+        }
+      };
+      fetchHistory();
+    }
+  }, [userEmail]);
 
   const generateContent = async () => {
     if (!userInput.trim()) {
@@ -86,8 +111,25 @@ export default function AIContentPage() {
       const data = await response.json();
       const text = data?.choices?.[0]?.message?.content || "No content generated.";
       setGeneratedContent(text);
-      setHistory(prev => [{ prompt: userInput, content: text, date: new Date() }, ...prev]);
+      
+      const newHistoryItem = { prompt: userInput, content: text, date: new Date(), email: userEmail };
+      setHistory(prev => [newHistoryItem, ...prev]);
       toast.success("Content generated successfully!");
+
+      // Save to database
+      if (userEmail) {
+        try {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+          await fetch(`${apiUrl}/ai-history`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newHistoryItem),
+          });
+        } catch (dbError) {
+          console.error("Failed to save history to DB:", dbError);
+        }
+      }
+
     } catch (error: any) {
       console.error("Groq API error:", error);
       toast.error(error.message || "Failed to generate content");
@@ -209,7 +251,8 @@ export default function AIContentPage() {
         </div>
 
         {/* Right Panel - Output */}
-        <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-sm transition-colors flex flex-col min-h-[500px]">
+        <div className="relative h-[500px] lg:h-full lg:min-h-full">
+          <div className="lg:absolute lg:inset-0 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-sm transition-colors flex flex-col h-full">
           {/* Output Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 dark:border-neutral-800">
             <span className="text-[11px] font-bold tracking-[0.1em] uppercase text-neutral-500 dark:text-neutral-400">
@@ -265,6 +308,7 @@ export default function AIContentPage() {
               </div>
             )}
           </div>
+        </div>
         </div>
       </div>
 

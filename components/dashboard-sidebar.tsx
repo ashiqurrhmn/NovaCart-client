@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { User, ShoppingBag, LogOut, Menu, X, LayoutDashboard, Users, PlusCircle, Package, CreditCard, Sparkles } from "lucide-react";
 import { signOut, useSession } from "@/app/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const buyerSidebarItems = [
   { label: "Dashboard", href: "/buyer/dashboard", icon: LayoutDashboard, exact: true },
@@ -121,7 +122,8 @@ export function DashboardSidebar() {
         </nav>
 
         {/* Sign out */}
-        <div className="pt-6 mt-6 lg:mt-0 border-t border-white/10">
+        <div className="pt-6 mt-6 lg:mt-0 border-t border-white/10 flex flex-col gap-1">
+          <ThemeToggle className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-colors w-full cursor-pointer text-left" iconClassName="w-[18px] h-[18px]" />
           <button
             onClick={handleSignOut}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-colors w-full cursor-pointer"

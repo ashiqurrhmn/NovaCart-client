@@ -13,6 +13,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { CartProvider } from "@/app/context/cart-context";
 import { WishlistProvider } from "@/app/context/wishlist-context";
 import { Toaster } from "react-hot-toast";
+import { ChatWidget } from "@/components/chat-widget";
 
 export const metadata: Metadata = {
   title: "NovaCart | Premium Tech Store",
@@ -45,7 +46,7 @@ export default function RootLayout({
               <main className="flex-1 flex flex-col">
                 {children}
               </main>
-              <ThemeToggle />
+              <ChatWidget />
             </CartProvider>
           </WishlistProvider>
         </ThemeProvider>

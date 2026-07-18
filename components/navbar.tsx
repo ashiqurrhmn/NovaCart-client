@@ -7,6 +7,7 @@ import { useSession, signOut } from "@/app/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/app/context/cart-context";
 import { useWishlist } from "@/app/context/wishlist-context";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Navbar() {
   const { data } = useSession();
@@ -117,6 +118,7 @@ export function Navbar() {
           {isLoggedIn ? (
             <>
               
+
               <Link
                 href="/wishlist"
                 className="flex items-center gap-1.5 text-[11px] font-medium tracking-[0.12em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity"
@@ -138,6 +140,7 @@ export function Navbar() {
                 <User className="w-[14px] h-[14px]" />
                 {user.name?.split(" ")[0]}
               </Link>
+              <ThemeToggle showText={false} className="flex items-center text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity" />
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-1.5 text-[11px] font-medium tracking-[0.12em] uppercase text-red-600 dark:text-red-400 hover:opacity-60 transition-opacity"
@@ -148,6 +151,7 @@ export function Navbar() {
           ) : (
             <>
               
+
               <Link
                 href="/wishlist"
                 className="flex items-center gap-1.5 text-[11px] font-medium tracking-[0.12em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity"
@@ -163,6 +167,7 @@ export function Navbar() {
                 <User className="w-[14px] h-[14px]" />
                 Login
               </Link>
+              <ThemeToggle showText={false} className="flex items-center text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity" />
             </>
           )}
         </div>
@@ -240,6 +245,9 @@ export function Navbar() {
               {item.label}
             </Link>
           ))}
+          <div className="pt-3 mt-2 border-t border-[#e8e2db] dark:border-[#222222]">
+            <ThemeToggle className="flex items-center gap-2 py-2.5 text-[12px] font-medium tracking-[0.15em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity w-full text-left" iconClassName="w-[14px] h-[14px]" />
+          </div>
           <div className="pt-3 mt-2 border-t border-[#e8e2db] dark:border-[#222222] space-y-1">
             {isLoggedIn ? (
               <>
