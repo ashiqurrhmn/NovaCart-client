@@ -140,10 +140,13 @@ export default function CartPage() {
                 </span>
               </div>
               
-              <button className="w-full flex items-center justify-center gap-2 bg-[#1a1a1a] dark:bg-white text-white dark:text-[#1a1a1a] py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:opacity-80 transition-opacity">
-                Checkout
+              <Link
+                href="/checkout"
+                className="w-full flex items-center justify-center gap-2 bg-[#1a1a1a] dark:bg-white text-white dark:text-[#1a1a1a] py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:opacity-80 transition-opacity"
+              >
+                Proceed to Checkout
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </Link>
               
               <p className="mt-4 text-xs text-center text-neutral-500">
                 Secure checkout powered by Stripe.
