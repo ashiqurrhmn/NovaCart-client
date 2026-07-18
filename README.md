@@ -2,7 +2,7 @@
 
 # 🛍️ NovaCart
 
-### Premium AI-Powered Cloth Store
+### Premium AI-Powered Clothing Store
 
 A **production-grade** e-commerce platform with multi-role authentication, AI-powered chat & content generation, Stripe payments, wishlist & cart management, and a stunning light/dark mode UI.
 
@@ -55,7 +55,20 @@ A **production-grade** e-commerce platform with multi-role authentication, AI-po
 ## 📸 Screenshots
 
 <!-- Replace with your actual screenshot -->
-<img width="1254" alt="novacart" src="https://github.com/user-attachments/assets/placeholder" />
+<img width="1910" height="906" alt="image" src="https://github.com/user-attachments/assets/7137cd3f-d249-4dbf-be95-5991e749f93d" />
+
+<img width="1913" height="909" alt="image" src="https://github.com/user-attachments/assets/a67a5caf-8a38-439b-8da4-0ac2f5ec6df5" />
+
+<img width="1915" height="910" alt="image" src="https://github.com/user-attachments/assets/995de697-11a3-4eaf-ad16-bae54e7542fc" />
+
+<img width="1909" height="901" alt="image" src="https://github.com/user-attachments/assets/124b215c-017d-4efb-8592-2bec673aee00" />
+
+<img width="1913" height="907" alt="image" src="https://github.com/user-attachments/assets/a299c9bc-ad5b-45e6-a791-10179f6287b9" />
+
+
+
+
+
 
 ---
 
@@ -193,7 +206,7 @@ Experience the platform from different perspectives using these test accounts:
 - [ ] **Order Notifications:** Real-time email/push notifications for order status updates
 - [ ] **Product Reviews:** Allow buyers to rate and review purchased products
 - [ ] **Social Sharing:** Built-in sharing tools for X (Twitter), Facebook, and LinkedIn
-- [ ] **Size Recommendations:** AI-powered size suggestion based on user preferences
+- [ ] **Size Recommendations:** AI-powered size suggestions based on user preferences
 - [ ] **Multi-Currency Support:** Auto-conversion for global shoppers
 
 ---
