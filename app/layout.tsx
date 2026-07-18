@@ -15,10 +15,11 @@ import { WishlistProvider } from "@/app/context/wishlist-context";
 import { Toaster } from "react-hot-toast";
 import { ChatWidget } from "@/components/chat-widget";
 import { ConditionalFooter } from "@/components/conditional-footer";
+import { SmoothScroll } from "@/components/smooth-scroll";
 
 export const metadata: Metadata = {
-  title: "NovaCart | Premium Tech Store",
-  description: "NovaCart is a premium tech e-commerce platform offering the latest gadgets, wearables, and electronics from 70+ trusted brands.",
+  title: "NovaCart | Premium AI Powered Cloth Store",
+  description: "NovaCart is a premium AI powered cloth store offering the latest fashion, wearables, and clothing from 70+ trusted brands.",
 };
 
 export default function RootLayout({
@@ -29,28 +30,30 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className="h-full antialiased"
+      className="antialiased"
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-screen flex flex-col">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem={false}
           disableTransitionOnChange
         >
-          <WishlistProvider>
-            <CartProvider>
-              <NextTopLoader color="var(--toploader-color)" showSpinner={false} height={3} />
-              <Toaster position="bottom-right" />
-              <ConditionalNavbar />
-              <main className="flex-1 flex flex-col">
-                {children}
-              </main>
-              <ConditionalFooter />
-              <ChatWidget />
-            </CartProvider>
-          </WishlistProvider>
+          <SmoothScroll>
+            <WishlistProvider>
+              <CartProvider>
+                <NextTopLoader color="var(--toploader-color)" showSpinner={false} height={3} />
+                <Toaster position="bottom-right" />
+                <ConditionalNavbar />
+                <main className="flex-1 flex flex-col">
+                  {children}
+                </main>
+                <ConditionalFooter />
+                <ChatWidget />
+              </CartProvider>
+            </WishlistProvider>
+          </SmoothScroll>
         </ThemeProvider>
       </body>
     </html>

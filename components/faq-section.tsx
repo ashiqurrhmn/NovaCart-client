@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Minus } from "lucide-react";
+import { ScrollAnimate, StaggerContainer, StaggerItem } from "@/components/scroll-animate";
 
 export function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0); // First item open by default
@@ -28,45 +29,48 @@ export function FAQSection() {
   return (
     <section className="w-full bg-black py-20 transition-colors border-y border-neutral-900">
       <div className="max-w-[800px] mx-auto px-6 lg:px-12">
-        <div className="flex flex-col items-center mb-12 text-center">
-          <p className="text-[11px] sm:text-xs font-semibold tracking-[0.2em] uppercase text-gray-500 mb-3">
-            Got Questions?
-          </p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-white leading-[1.1]">
-            Frequently Asked<br className="sm:hidden" /> Questions
-          </h2>
-        </div>
+        <ScrollAnimate variant="fadeUp">
+          <div className="flex flex-col items-center mb-12 text-center">
+            <p className="text-[11px] sm:text-xs font-semibold tracking-[0.2em] uppercase text-gray-500 mb-3">
+              Got Questions?
+            </p>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-white leading-[1.1]">
+              Frequently Asked<br className="sm:hidden" /> Questions
+            </h2>
+          </div>
+        </ScrollAnimate>
 
-        <div className="flex flex-col gap-4">
+        <StaggerContainer className="flex flex-col gap-4" staggerDelay={0.08}>
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
-              <div 
-                key={index} 
-                className={`border border-neutral-800 rounded-xl overflow-hidden transition-all duration-300 ${isOpen ? 'bg-[#111111]' : 'bg-transparent hover:bg-[#0a0a0a]'}`}
-              >
-                <button
-                  onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="w-full flex items-center justify-between p-6 text-left"
-                >
-                  <h3 className="text-sm sm:text-base font-semibold text-white tracking-wide pr-8">
-                    {faq.question}
-                  </h3>
-                  <div className="flex-shrink-0 text-white">
-                    {isOpen ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
-                  </div>
-                </button>
+              <StaggerItem key={index}>
                 <div 
-                  className={`px-6 overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-48 pb-6 opacity-100' : 'max-h-0 pb-0 opacity-0'}`}
+                  className={`border border-neutral-800 rounded-xl overflow-hidden transition-all duration-300 ${isOpen ? 'bg-[#111111]' : 'bg-transparent hover:bg-[#0a0a0a]'}`}
                 >
-                  <p className="text-[13px] sm:text-sm text-gray-400 leading-relaxed">
-                    {faq.answer}
-                  </p>
+                  <button
+                    onClick={() => setOpenIndex(isOpen ? null : index)}
+                    className="w-full flex items-center justify-between p-6 text-left"
+                  >
+                    <h3 className="text-sm sm:text-base font-semibold text-white tracking-wide pr-8">
+                      {faq.question}
+                    </h3>
+                    <div className="flex-shrink-0 text-white">
+                      {isOpen ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                    </div>
+                  </button>
+                  <div 
+                    className={`px-6 overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-48 pb-6 opacity-100' : 'max-h-0 pb-0 opacity-0'}`}
+                  >
+                    <p className="text-[13px] sm:text-sm text-gray-400 leading-relaxed">
+                      {faq.answer}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

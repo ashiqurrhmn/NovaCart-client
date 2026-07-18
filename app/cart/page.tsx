@@ -4,13 +4,15 @@ import { useCart } from "@/app/context/cart-context";
 import Image from "next/image";
 import Link from "next/link";
 import { Trash2, Minus, Plus, ShoppingBag, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ScrollAnimate } from "@/components/scroll-animate";
 
 export default function CartPage() {
   const { cartItems, removeFromCart, updateQuantity, totalPrice } = useCart();
 
   if (cartItems.length === 0) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center bg-[#f5f0eb] dark:bg-[#111111] py-20 px-4">
+      <ScrollAnimate variant="fadeUp" className="flex-1 flex flex-col items-center justify-center bg-[#f5f0eb] dark:bg-[#111111] py-20 px-4">
         <div className="w-24 h-24 bg-white dark:bg-[#1a1a1a] rounded-full flex items-center justify-center shadow-sm mb-6">
           <ShoppingBag className="w-10 h-10 text-neutral-300 dark:text-neutral-600" />
         </div>
@@ -24,7 +26,7 @@ export default function CartPage() {
         >
           Start Shopping
         </Link>
-      </div>
+      </ScrollAnimate>
     );
   }
 
@@ -43,11 +45,17 @@ export default function CartPage() {
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Cart Items List */}
           <div className="w-full lg:w-2/3 flex flex-col gap-4">
-            {cartItems.map((item) => (
-              <div
-                key={item._id}
-                className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 bg-white dark:bg-[#1a1a1a] p-4 sm:p-5 rounded-2xl border border-[#e8e2db] dark:border-[#333] shadow-sm relative group"
-              >
+            <AnimatePresence mode="popLayout">
+              {cartItems.map((item) => (
+                <motion.div
+                  key={item._id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 bg-white dark:bg-[#1a1a1a] p-4 sm:p-5 rounded-2xl border border-[#e8e2db] dark:border-[#333] shadow-sm relative group"
+                >
                 {/* Item Image */}
                 <Link href={`/product/${item._id}`} className="relative w-24 h-24 sm:w-28 sm:h-28 shrink-0 bg-[#f5f0eb] dark:bg-[#222] rounded-xl overflow-hidden">
                   <Image
@@ -107,12 +115,13 @@ export default function CartPage() {
                     </button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
+            </AnimatePresence>
           </div>
 
           {/* Order Summary */}
-          <div className="w-full lg:w-1/3">
+          <ScrollAnimate variant="fadeLeft" delay={0.2} className="w-full lg:w-1/3">
             <div className="bg-white dark:bg-[#1a1a1a] border border-[#e8e2db] dark:border-[#333] p-6 sm:p-8 rounded-2xl shadow-sm sticky top-24">
               <h2 className="text-xl font-bold text-[#1a1a1a] dark:text-white mb-6 uppercase tracking-tight border-b border-[#e8e2db] dark:border-[#333] pb-4">
                 Order Summary
@@ -152,7 +161,7 @@ export default function CartPage() {
                 Secure checkout powered by Stripe.
               </p>
             </div>
-          </div>
+          </ScrollAnimate>
         </div>
       </div>
     </div>

@@ -8,6 +8,8 @@ import { useCart } from "@/app/context/cart-context";
 import { useSession } from "@/app/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ScrollAnimate } from "@/components/scroll-animate";
 
 export default function WishlistPage() {
   const { wishlistItems, removeFromWishlist, isLoading } = useWishlist();
@@ -54,7 +56,7 @@ export default function WishlistPage() {
         </div>
 
         {wishlistItems.length === 0 ? (
-          <div className="bg-white dark:bg-[#1a1a1a] border border-[#e8e2db] dark:border-[#333] rounded-2xl p-12 text-center">
+          <ScrollAnimate variant="fadeUp" className="bg-white dark:bg-[#1a1a1a] border border-[#e8e2db] dark:border-[#333] rounded-2xl p-12 text-center">
             <Heart className="w-16 h-16 mx-auto text-neutral-300 dark:text-neutral-700 mb-6" />
             <h2 className="text-xl font-bold text-[#1a1a1a] dark:text-white mb-2">
               Your wishlist is empty
@@ -68,14 +70,20 @@ export default function WishlistPage() {
             >
               Explore Products
             </Link>
-          </div>
+          </ScrollAnimate>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {wishlistItems.map((item) => (
-              <div 
-                key={item._id} 
-                className="group flex flex-col bg-white dark:bg-[#1a1a1a] rounded-sm overflow-hidden border border-[#e8e2db] dark:border-[#333333] transition-all hover:shadow-lg"
-              >
+          <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <AnimatePresence mode="popLayout">
+              {wishlistItems.map((item) => (
+                <motion.div 
+                  key={item._id} 
+                  layout
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="group flex flex-col bg-white dark:bg-[#1a1a1a] rounded-sm overflow-hidden border border-[#e8e2db] dark:border-[#333333] transition-all hover:shadow-lg"
+                >
                 <Link href={`/product/${item._id}`} className="relative aspect-[4/5] overflow-hidden bg-[#f5f0eb] dark:bg-[#222]">
                   <Image
                     src={item.image}
@@ -116,9 +124,10 @@ export default function WishlistPage() {
                     </button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+            </AnimatePresence>
+          </motion.div>
         )}
       </div>
     </div>

@@ -25,7 +25,7 @@ export default async function Home() {
   const products = await getProducts();
 
   return (
-    <div className="flex flex-col flex-1 bg-[#f5f0eb] dark:bg-[#111111]">
+    <div className="flex flex-col flex-1 bg-[#f5f0eb] dark:bg-[#111111] overflow-x-hidden">
       <HeroSection />
       <CategorySection />
       <CollectionSection products={products} />

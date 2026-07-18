@@ -1,4 +1,7 @@
+"use client";
+
 import { Truck, Package, BadgeCheck, Lock } from "lucide-react";
+import { StaggerContainer, StaggerItem } from "@/components/scroll-animate";
 
 export function FeaturesSection() {
   const features = [
@@ -27,23 +30,25 @@ export function FeaturesSection() {
   return (
     <section className="w-full bg-[#111111] dark:bg-black py-12 sm:py-16 border-y border-neutral-800 dark:border-neutral-800 transition-colors">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4">
+        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4" staggerDelay={0.1}>
           {features.map((feature, index) => (
-            <div key={index} className="flex items-center gap-4 justify-start lg:justify-center">
-              <div className="text-white dark:text-white">
-                {feature.icon}
+            <StaggerItem key={index} variant="scaleUp">
+              <div className="flex items-center gap-4 justify-start lg:justify-center">
+                <div className="text-white dark:text-white">
+                  {feature.icon}
+                </div>
+                <div className="flex flex-col">
+                  <h3 className="text-[11px] sm:text-[12px] font-bold uppercase tracking-widest text-white dark:text-white mb-1 transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-[11px] sm:text-[12px] text-gray-400 dark:text-gray-400 transition-colors">
+                    {feature.description}
+                  </p>
+                </div>
               </div>
-              <div className="flex flex-col">
-                <h3 className="text-[11px] sm:text-[12px] font-bold uppercase tracking-widest text-white dark:text-white mb-1 transition-colors">
-                  {feature.title}
-                </h3>
-                <p className="text-[11px] sm:text-[12px] text-gray-400 dark:text-gray-400 transition-colors">
-                  {feature.description}
-                </p>
-              </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

@@ -5,6 +5,8 @@ import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Search, Package, Sparkles, Star, Tag, ChevronDown, Home, Music, Smartphone, HardDrive, ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductCard } from "@/components/product-card";
+import { ScrollAnimate } from "@/components/scroll-animate";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Product {
   _id: string;
@@ -89,7 +91,7 @@ export default function ShopPageClient({ products }: { products: Product[] }) {
   const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <div className="flex-1 bg-[#f5f0eb] dark:bg-[#111111] min-h-screen overflow-x-hidden">
+    <div className="flex-1 bg-[#f5f0eb] dark:bg-[#111111]">
       {/* Hero Banner */}
       <div className="relative w-full h-[180px] sm:h-[240px] md:h-[360px] overflow-hidden">
         <Image
@@ -104,7 +106,7 @@ export default function ShopPageClient({ products }: { products: Product[] }) {
       </div>
 
       {/* Search Bar Section */}
-      <div className="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-8 -mt-6 relative z-10">
+      <ScrollAnimate variant="fadeUp" delay={0.1} className="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-8 -mt-6 relative z-10">
         <div className="bg-white dark:bg-[#1a1a1a] rounded-xl shadow-lg px-4 sm:px-6 md:px-8 py-4 sm:py-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 sm:gap-4">
           <h2 className="text-base sm:text-lg md:text-xl font-bold text-[#1a1a1a] dark:text-[#f0f0f0]">
             Give All You Need
@@ -128,7 +130,7 @@ export default function ShopPageClient({ products }: { products: Product[] }) {
             </button>
           </div>
         </div>
-      </div>
+      </ScrollAnimate>
 
       {/* Main Content: Sidebar + Products */}
       <div className="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-8 py-6 md:py-10">
@@ -244,11 +246,22 @@ export default function ShopPageClient({ products }: { products: Product[] }) {
               </div>
             ) : (
               <div className="flex flex-col gap-8">
-                <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
-                  {paginatedProducts.map((product) => (
-                    <ProductCard key={product._id} product={product} />
-                  ))}
-                </div>
+                <motion.div layout className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+                  <AnimatePresence mode="popLayout">
+                    {paginatedProducts.map((product) => (
+                      <motion.div
+                        key={product._id}
+                        layout
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                      >
+                        <ProductCard product={product} />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
 
                 {/* Pagination Controls */}
                 {totalPages > 1 && (
