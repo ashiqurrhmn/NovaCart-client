@@ -17,13 +17,11 @@ export default function WishlistPage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
 
-  // Redirect if guest or admin
+  // Redirect if guest
   useEffect(() => {
     if (!isPending) {
       if (!session?.user) {
         router.push("/login");
-      } else if (session.user.role === "admin") {
-        router.push("/");
       }
     }
   }, [session, isPending, router]);
@@ -36,8 +34,32 @@ export default function WishlistPage() {
     );
   }
 
-  if (!session?.user || session.user.role === "admin") {
+  if (!session?.user) {
     return null; // Will redirect
+  }
+
+  if (session.user.role === "admin") {
+    return (
+      <div className="flex-1 w-full bg-[#f5f0eb] dark:bg-[#111111]">
+        <div className="max-w-[1440px] mx-auto px-4 py-8 md:py-12 flex items-center justify-center min-h-[50vh]">
+          <ScrollAnimate variant="fadeUp" className="bg-white dark:bg-[#1a1a1a] border border-[#e8e2db] dark:border-[#333] rounded-2xl p-12 text-center w-full max-w-2xl">
+            <Heart className="w-16 h-16 mx-auto text-neutral-300 dark:text-neutral-700 mb-6" />
+            <h2 className="text-xl font-bold text-[#1a1a1a] dark:text-white mb-2">
+              Admins don't have wishlists
+            </h2>
+            <p className="text-neutral-500 dark:text-neutral-400 mb-8 max-w-md mx-auto">
+              The wishlist feature is only available for customer accounts.
+            </p>
+            <Link
+              href="/admin/dashboard"
+              className="inline-flex items-center justify-center bg-[#1a1a1a] dark:bg-white text-white dark:text-[#1a1a1a] px-8 py-4 rounded-xl font-bold tracking-wide uppercase text-sm hover:opacity-80 transition-opacity"
+            >
+              Go to Dashboard
+            </Link>
+          </ScrollAnimate>
+        </div>
+      </div>
+    );
   }
 
   const handleMoveToCart = (item: any) => {
