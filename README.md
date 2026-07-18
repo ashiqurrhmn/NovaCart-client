@@ -19,7 +19,7 @@ A **production-grade** e-commerce platform with multi-role authentication, AI-po
 
 &nbsp;
 
-🌍 [**Live Demo**](https://novacart-client.vercel.app/) &nbsp;·&nbsp; 📦 [**Client Repo**](https://github.com/ashiqurrhmn/NovaCart-client) &nbsp;·&nbsp; 🔌 [**Server Repo**](https://github.com/ashiqurrhmn/NovaCart-server)
+🌍 [**Live Demo**](https://nova-cart-beta.vercel.app/) &nbsp;·&nbsp; 📦 [**Client Repo**](https://github.com/ashiqurrhmn/NovaCart-client) &nbsp;·&nbsp; 🔌 [**Server Repo**](https://github.com/ashiqurrhmn/NovaCart-server)
 
 </div>
 
@@ -219,7 +219,7 @@ graph TB
         NextJS["Next.js 16<br/>App Router + RSC"]
         Auth["Better Auth<br/>Client SDK + JWT"]
         StripeJS["Stripe.js<br/>Payment Elements"]
-        ChatAI["Nova AI Chat<br/>Gemini Powered"]
+        ChatAI["Nova AI Chat<br/>Groq Powered"]
     end
     
     subgraph Server["🚀 Backend — Express 5"]
