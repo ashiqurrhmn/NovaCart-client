@@ -76,7 +76,7 @@ A **production-grade** e-commerce platform with multi-role authentication, AI-po
 
 | | Feature | Description |
 |---|---|---|
-| 🤖 | **AI Chat Assistant** | Built-in "Nova" chatbot powered by Gemini AI helps users discover products, track orders, and get fashion recommendations |
+| 🤖 | **AI Chat Assistant** | Built-in "Nova" chatbot powered by Groq helps users discover products, track orders, and get fashion recommendations |
 | ✍️ | **AI Content Studio** | Admin tool for generating blog posts, product descriptions, social media copy, and documentation using AI |
 | 💳 | **Stripe Integration** | Secure payment processing with Stripe Payment Intents for seamless checkout |
 | 🔐 | **Better Auth + JWT** | Email/password and Google social auth with JWT-based API protection and role-based access control |
@@ -235,7 +235,7 @@ graph TB
     subgraph External["🌍 External Services"]
         Stripe["💳 Stripe<br/>Payment Intents"]
         BetterAuth["🔐 Better Auth<br/>Session + JWKS"]
-        Gemini["🤖 Google Gemini<br/>AI Chat & Content"]
+        Groq["🤖 Groq<br/>AI Chat & Content"]
     end
     
     NextJS -->|API Calls| MW
@@ -247,7 +247,7 @@ graph TB
     NextJS --> StripeJS
     StripeJS --> Stripe
     Routes -->|Payment Intents| Stripe
-    ChatAI --> Gemini
+    ChatAI --> Groq
 ```
 
 ### Database Collections
@@ -397,8 +397,8 @@ NEXT_PUBLIC_API_URL=http://localhost:5000
 STRIPE_SECRET_KEY=sk_test_...
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 
-# Gemini AI
-GEMINI_API_KEY=your-gemini-api-key
+# Groq AI
+Groq_API_KEY=your-groq-api-key
 ```
 
 ### Backend (`NovaCart-server/.env`)
