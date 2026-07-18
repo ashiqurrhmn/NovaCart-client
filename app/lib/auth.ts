@@ -7,7 +7,7 @@ const client = new MongoClient(process.env.MONGODB_URI as string);
 const db = client.db("novacart");
 
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL,
+  baseURL: process.env.BETTER_AUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined),
   trustedOrigins: ["https://nova-cart-beta.vercel.app", "http://localhost:3000"],
   emailAndPassword: {
     enabled: true,
