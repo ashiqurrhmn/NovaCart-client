@@ -8,6 +8,7 @@ const db = client.db("novacart");
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
+  trustHost: true,
   trustedOrigins: ["https://nova-cart-beta.vercel.app", "http://localhost:3000"],
   emailAndPassword: {
     enabled: true,
