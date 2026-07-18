@@ -63,7 +63,7 @@ export default function CheckoutPage() {
     const loadingToast = toast.loading("Preparing payment...");
     
     try {
-      const res = await fetch("http://localhost:5000/create-payment-intent", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/create-payment-intent`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items: cartItems }),
@@ -186,6 +186,7 @@ export default function CheckoutPage() {
                 cartItems={cartItems} 
                 totalPrice={totalPrice} 
                 userId={session?.user?.id as string} 
+                user={session?.user}
                 clearCart={clearCart}
                 onBack={() => setStep(1)}
               />
@@ -197,7 +198,7 @@ export default function CheckoutPage() {
   );
 }
 
-function CheckoutForm({ address, cartItems, totalPrice, userId, clearCart, onBack }: any) {
+function CheckoutForm({ address, cartItems, totalPrice, userId, user, clearCart, onBack }: any) {
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -220,11 +221,14 @@ function CheckoutForm({ address, cartItems, totalPrice, userId, clearCart, onBac
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
       // Save order to DB
       try {
-        const res = await fetch("http://localhost:5000/orders", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             userId,
+            userName: user?.name,
+            userEmail: user?.email,
+            userImage: user?.image,
             items: cartItems,
             totalAmount: totalPrice,
             deliveryAddress: address,

@@ -15,6 +15,7 @@ const buyerSidebarItems = [
 
 const adminSidebarItems = [
   { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard, exact: true },
+  { label: "Manage Orders", href: "/admin/dashboard/orders", icon: ShoppingBag },
   { label: "Manage Users", href: "/admin/dashboard/users", icon: Users },
   { label: "Add Product", href: "/admin/dashboard/add-product", icon: PlusCircle },
   { label: "Manage Products", href: "/admin/dashboard/products", icon: Package },

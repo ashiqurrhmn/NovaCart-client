@@ -6,66 +6,22 @@ import {
   Package,
   Truck,
   XCircle,
+  RefreshCw,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useSession } from "@/app/lib/auth-client";
 
-const orders = [
-  {
-    id: "NC-20260715-001",
-    date: "Jul 15, 2026",
-    items: "Premium Wireless Headphones × 1",
-    total: "$149.99",
-    status: "delivered" as const,
-  },
-  {
-    id: "NC-20260712-002",
-    date: "Jul 12, 2026",
-    items: "Smart Watch Pro × 1",
-    total: "$299.00",
-    status: "delivered" as const,
-  },
-  {
-    id: "NC-20260710-003",
-    date: "Jul 10, 2026",
-    items: "Leather Crossbody Bag × 1, Wallet × 1",
-    total: "$139.50",
-    status: "shipped" as const,
-  },
-  {
-    id: "NC-20260708-004",
-    date: "Jul 08, 2026",
-    items: "Running Shoes V2 × 1",
-    total: "$124.99",
-    status: "delivered" as const,
-  },
-  {
-    id: "NC-20260705-005",
-    date: "Jul 05, 2026",
-    items: "Noise Cancelling Earbuds × 2",
-    total: "$179.98",
-    status: "delivered" as const,
-  },
-  {
-    id: "NC-20260630-006",
-    date: "Jun 30, 2026",
-    items: "Graphic Tee × 3",
-    total: "$74.97",
-    status: "cancelled" as const,
-  },
-  {
-    id: "NC-20260625-007",
-    date: "Jun 25, 2026",
-    items: "Denim Jacket × 1",
-    total: "$189.00",
-    status: "delivered" as const,
-  },
-  {
-    id: "NC-20260620-008",
-    date: "Jun 20, 2026",
-    items: "Sunglasses × 1, Cap × 1",
-    total: "$115.00",
-    status: "pending" as const,
-  },
-];
+interface OrderItem {
+  name: string;
+  quantity: number;
+}
+interface Order {
+  _id: string;
+  createdAt: string;
+  items: OrderItem[];
+  totalAmount: number;
+  status: "delivered" | "shipped" | "pending" | "cancelled" | "paid" | "processing";
+}
 
 const statusConfig = {
   delivered: {
@@ -86,6 +42,12 @@ const statusConfig = {
     color: "text-amber-500",
     bg: "bg-amber-50 dark:bg-amber-900/20",
   },
+  processing: {
+    label: "Processing",
+    icon: RefreshCw,
+    color: "text-indigo-500",
+    bg: "bg-indigo-50 dark:bg-indigo-900/20",
+  },
   cancelled: {
     label: "Cancelled",
     icon: XCircle,
@@ -95,6 +57,38 @@ const statusConfig = {
 };
 
 export default function OrdersPage() {
+  const { data: session } = useSession();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (session?.user?.id) {
+        try {
+          const res = await fetch(`http://localhost:5000/orders/${session.user.id}`);
+          const data = await res.json();
+          setOrders(data);
+        } catch (error) {
+          console.error("Error fetching orders", error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+    
+    if (session?.user?.id) {
+        fetchOrders();
+    } else if (session === null) {
+        setLoading(false);
+    }
+  }, [session]);
+
+  if (loading) {
+    return <div className="p-8 text-center text-neutral-500">Loading orders...</div>;
+  }
+
   return (
     <div className="flex flex-col gap-5">
       {/* Header */}
@@ -137,54 +131,73 @@ export default function OrdersPage() {
         </div>
 
         {/* Table Rows */}
-        {orders.map((order) => {
-          const config = statusConfig[order.status];
-          const StatusIcon = config.icon;
-          return (
-            <div
-              key={order.id}
-              className="grid grid-cols-1 sm:grid-cols-[1.2fr_1fr_2fr_1fr_1fr] gap-2 sm:gap-4 px-6 py-4 border-b border-neutral-50 dark:border-neutral-800/50 last:border-0 hover:bg-neutral-50/50 dark:hover:bg-white/[0.02] transition-colors"
-            >
-              {/* Order ID */}
-              <div className="flex items-center">
-                <span className="text-[13px] font-medium text-[#1a1a1a] dark:text-white transition-colors">
-                  {order.id}
-                </span>
-              </div>
+        {orders.length === 0 ? (
+          <div className="px-6 py-8 text-center text-sm text-neutral-500 dark:text-neutral-400">
+            No orders found.
+          </div>
+        ) : (
+          orders.map((order) => {
+            const mappedStatus = order.status === "paid" ? "processing" : order.status;
+            const config = statusConfig[mappedStatus as keyof typeof statusConfig] || statusConfig.processing || statusConfig.pending;
+            const StatusIcon = config.icon;
+            
+            const itemsStr = order.items?.map(item => `${item.name} × ${item.quantity}`).join(', ') || 'No items';
+            const dateStr = new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' });
 
-              {/* Date */}
-              <div className="flex items-center">
-                <span className="text-[13px] text-neutral-500 dark:text-neutral-400 transition-colors">
-                  {order.date}
-                </span>
-              </div>
-
-              {/* Items */}
-              <div className="flex items-center">
-                <span className="text-[13px] text-neutral-600 dark:text-neutral-300 truncate transition-colors">
-                  {order.items}
-                </span>
-              </div>
-
-              {/* Total */}
-              <div className="flex items-center">
-                <span className="text-[13px] font-semibold text-[#1a1a1a] dark:text-white transition-colors">
-                  {order.total}
-                </span>
-              </div>
-
-              {/* Status */}
-              <div className="flex items-center">
-                <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.bg}`}>
-                  <StatusIcon className={`w-3.5 h-3.5 ${config.color}`} />
-                  <span className={`text-[11px] font-medium ${config.color}`}>
-                    {config.label}
+            return (
+              <div
+                key={order._id}
+                className="grid grid-cols-1 sm:grid-cols-[1.2fr_1fr_2fr_1fr_1fr] gap-2 sm:gap-4 px-6 py-4 border-b border-neutral-50 dark:border-neutral-800/50 last:border-0 hover:bg-neutral-50/50 dark:hover:bg-white/[0.02] transition-colors"
+              >
+                {/* Order ID */}
+                <div className="flex items-center">
+                  <span className="text-[13px] font-medium text-[#1a1a1a] dark:text-white transition-colors truncate pr-2">
+                    {order._id}
                   </span>
                 </div>
+
+                {/* Date */}
+                <div className="flex items-center">
+                  <span className="text-[13px] text-neutral-500 dark:text-neutral-400 transition-colors">
+                    {dateStr}
+                  </span>
+                </div>
+
+                {/* Items */}
+                <div className="flex items-center">
+                  <select 
+                    className="text-[13px] text-neutral-600 dark:text-neutral-300 bg-transparent border border-neutral-200 dark:border-neutral-700 rounded-md p-1.5 outline-none w-full max-w-[160px] cursor-pointer hover:border-neutral-300 dark:hover:border-neutral-600 transition-colors"
+                    defaultValue=""
+                  >
+                    <option value="" disabled>{order.items?.length || 0} Item{order.items?.length !== 1 ? 's' : ''}</option>
+                    {order.items?.map((item, idx) => (
+                      <option key={idx} value={idx}>
+                        {item.name} × {item.quantity}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Total */}
+                <div className="flex items-center">
+                  <span className="text-[13px] font-semibold text-[#1a1a1a] dark:text-white transition-colors">
+                    ${(order.totalAmount || 0).toFixed(2)}
+                  </span>
+                </div>
+
+                {/* Status */}
+                <div className="flex items-center">
+                  <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.bg}`}>
+                    <StatusIcon className={`w-3.5 h-3.5 ${config.color}`} />
+                    <span className={`text-[11px] font-medium ${config.color}`}>
+                      {config.label}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
     </div>
   );

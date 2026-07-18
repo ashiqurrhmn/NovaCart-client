@@ -10,7 +10,7 @@ export async function uploadImageToImgBB(formData: FormData) {
     throw new Error("Image size must be less than 5MB");
   }
 
-  const apiKey = process.env.IMGBB_API;
+  const apiKey = process.env.NEXT_PUBLIC_IMGBB_API || process.env.IMGBB_API;
   if (!apiKey) {
     throw new Error("ImgBB API key is not configured");
   }
