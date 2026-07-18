@@ -44,7 +44,7 @@ export default function WishlistPage() {
   };
 
   return (
-    <div className="flex-1 w-full bg-[#fcfcfc] dark:bg-[#111111]">
+    <div className="flex-1 w-full bg-[#f5f0eb] dark:bg-[#111111]">
       <div className="max-w-[1440px] mx-auto px-4 py-8 md:py-12">
         <div className="flex items-center gap-3 mb-8">
           <Heart className="w-8 h-8 text-red-500 fill-red-500" />

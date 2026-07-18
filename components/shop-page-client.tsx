@@ -101,11 +101,6 @@ export default function ShopPageClient({ products }: { products: Product[] }) {
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-black/30" />
-        <div className="absolute inset-0 flex items-end justify-center overflow-hidden pb-0">
-          <h1 className="text-[72px] sm:text-[80px] md:text-[130px] lg:text-[360px] font-black text-white/50 uppercase tracking-wider select-none leading-none text-center translate-y-[20%]">
-            Shop
-          </h1>
-        </div>
       </div>
 
       {/* Search Bar Section */}

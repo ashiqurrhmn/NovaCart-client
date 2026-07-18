@@ -14,6 +14,7 @@ import { CartProvider } from "@/app/context/cart-context";
 import { WishlistProvider } from "@/app/context/wishlist-context";
 import { Toaster } from "react-hot-toast";
 import { ChatWidget } from "@/components/chat-widget";
+import { ConditionalFooter } from "@/components/conditional-footer";
 
 export const metadata: Metadata = {
   title: "NovaCart | Premium Tech Store",
@@ -46,6 +47,7 @@ export default function RootLayout({
               <main className="flex-1 flex flex-col">
                 {children}
               </main>
+              <ConditionalFooter />
               <ChatWidget />
             </CartProvider>
           </WishlistProvider>

@@ -8,9 +8,7 @@ export function HeroSection() {
     <section className="relative w-full h-[calc(100vh-56px)] min-h-[480px] max-h-[550px] sm:max-h-[720px] overflow-hidden bg-[#f5f0eb] dark:bg-[#111111] mt-13 flex items-end">
       {/* Giant background brand text */}
       <div className="absolute inset-0 z-[1] flex items-center justify-center pointer-events-none overflow-hidden mt-[8vh] sm:mt-[12vh]">
-        <h1
-          className="text-[13vw] sm:text-[14vw] font-black uppercase leading-[0.85] tracking-[-0.03em] text-[#1a1a1a] dark:text-[#f0f0f0] select-none whitespace-nowrap"
-        >
+        <h1 className="text-[13vw] sm:text-[14vw] font-black uppercase leading-[0.85] tracking-[-0.03em] text-[#1a1a1a] dark:text-[#f0f0f0] select-none whitespace-nowrap">
           NOVACART
         </h1>
       </div>
@@ -62,9 +60,7 @@ export function HeroSection() {
 
           {/* Bottom-right: vertical text */}
           <div className="hidden sm:flex flex-col items-end pointer-events-auto">
-            <p
-              className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0] leading-[2.2] text-right"
-            >
+            <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#1a1a1a] dark:text-[#e0e0e0] leading-[2.2] text-right">
               New
               <br />
               Collection
