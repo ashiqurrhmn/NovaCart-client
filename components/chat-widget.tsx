@@ -96,7 +96,7 @@ export function ChatWidget() {
           "Authorization": `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
+          model: "openai/gpt-oss-120b",
           messages: apiMessages,
           temperature: 0.7,
           stream: true, // Enable streaming

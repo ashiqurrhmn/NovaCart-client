@@ -49,7 +49,7 @@ export default function AddProductPage() {
           "Authorization": `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
+          model: "openai/gpt-oss-120b",
           messages: [
             { role: "system", content: "You are an expert e-commerce copywriter. Write a compelling, concise product description for the given product. Only return the description text, no introductory phrases. Keep it under 2 short paragraphs." },
             { role: "user", content: `Product Title: ${formData.title}\nCategory: ${formData.category}` }

@@ -98,7 +98,7 @@ export default function AIContentPage() {
             "Authorization": `Bearer ${apiKey}`,
           },
           body: JSON.stringify({
-            model: "llama-3.1-8b-instant",
+            model: "openai/gpt-oss-120b",
             messages: [
               { role: "system", content: selectedTemplate.systemPrompt },
               { role: "user", content: `${userInput}\n\nPlease generate content that is approximately ${outputLength.label.toLowerCase()} in length.` },
